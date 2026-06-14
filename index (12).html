@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>De interdisciplinaire tafel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --uu-yellow:#FFD200;
+    --uu-navy:#001240;
+    --uu-blue:#5287C6;
+    --uu-teal:#24A793;
+    --uu-purple:#5B2182;
+    --uu-salmon:#F3965E;
+    --uu-pink:#AA1555;
+    --uu-brown:#6E3B23;
+    --uu-lightyellow:#FFE6AB;
+    --paper:#FFFFFF;
+    --ink:#001240;
+    --muted:#5b647d;
+    --line:#e2e5ee;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Open Sans',Arial,sans-serif;
+    color:var(--ink);
+    background:#f6f7fb;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Merriweather',Georgia,serif;color:var(--uu-navy);margin:0;}
+  button{font-family:inherit;cursor:pointer;}
+  :focus-visible{outline:3px solid var(--uu-blue);outline-offset:2px;}
+
+  /* ---------- Header ---------- */
+  header.bar{
+    background:var(--uu-yellow);
+    color:var(--uu-navy);
+    padding:18px 22px;
+    display:flex;align-items:center;gap:16px;
+    border-bottom:4px solid var(--uu-navy);
+  }
+  .wordmark{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;}
+  .wordmark .sol{width:22px;height:22px;background:var(--uu-navy);border-radius:2px;flex:none;}
+  header.bar h1{font-size:1.35rem;font-weight:900;margin-left:auto;}
+  @media(max-width:620px){header.bar h1{font-size:1.05rem;}}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:22px;}
+
+  /* ---------- Disclaimer ---------- */
+  .notice{
+    background:var(--uu-lightyellow);
+    border:1px solid #e7cf86;
+    border-left:6px solid var(--uu-yellow);
+    border-radius:8px;
+    padding:12px 16px;
+    font-size:.86rem;color:#5a4a12;
+    margin-bottom:12px;
+  }
+  .notice:last-of-type{margin-bottom:22px;}
+  .notice strong{color:var(--uu-navy);}
+  .notice a{color:var(--uu-purple);font-weight:600;}
+  .notice.privacy{background:#eef3fb;border-color:#cdd9ec;border-left-color:var(--uu-blue);color:#324a6b;}
+
+  /* ---------- Setup ---------- */
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:26px;box-shadow:0 1px 2px rgba(0,18,64,.04);}
+  .lede{color:var(--muted);font-size:1rem;max-width:62ch;margin:10px 0 26px;}
+  .field{margin-bottom:20px;}
+  .field > label{display:block;font-weight:700;font-size:.9rem;margin-bottom:7px;color:var(--uu-navy);}
+  .field .hint{font-weight:400;color:var(--muted);font-size:.82rem;}
+  select,input[type=text],input[type=password],textarea{
+    width:100%;font-family:inherit;font-size:.95rem;color:var(--ink);
+    padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;background:#fff;
+  }
+  select:focus,input:focus,textarea:focus{border-color:var(--uu-blue);outline:none;}
+  .experts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:720px){.experts-grid{grid-template-columns:1fr;}}
+  .expert-pick{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fbfcfe;}
+  .expert-pick .seatdot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;vertical-align:middle;}
+  .expert-pick label.head{font-weight:700;font-size:.84rem;color:var(--uu-navy);display:block;margin-bottom:9px;}
+  .custom-row{margin-top:8px;display:none;}
+  .custom-row.show{display:block;}
+
+  details.adv{margin-top:6px;border:1px dashed var(--line);border-radius:10px;padding:4px 14px;}
+  details.adv summary{cursor:pointer;font-weight:600;font-size:.86rem;color:var(--muted);padding:9px 0;}
+  details.adv .inner{padding:4px 0 14px;}
+
+  .start-row{display:flex;align-items:center;gap:16px;margin-top:24px;flex-wrap:wrap;}
+  .btn{
+    background:var(--uu-navy);color:#fff;border:none;border-radius:10px;
+    padding:13px 26px;font-weight:700;font-size:.96rem;
+  }
+  .btn:hover{background:#0a2160;}
+  .btn.secondary{background:#fff;color:var(--uu-navy);border:1.5px solid var(--uu-navy);}
+  .btn.secondary:hover{background:#f0f3fb;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .formerror{color:var(--uu-pink);font-size:.86rem;font-weight:600;}
+
+  .toggle{display:inline-flex;align-items:center;gap:9px;font-size:.88rem;color:var(--muted);cursor:pointer;}
+  .toggle input{width:auto;}
+
+  /* ---------- Stage ---------- */
+  #stage{display:none;}
+  .stage-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+  .stage-head h2{font-size:1.35rem;}
+  .stage-head .topic{color:var(--muted);font-size:.92rem;}
+
+  /* ---------- Room scene ---------- */
+  .room{position:relative;border-radius:18px;overflow:hidden;margin-bottom:18px;
+    height:clamp(310px,46vw,440px);background:#7c5230;
+    box-shadow:inset 0 0 70px rgba(20,10,4,.55);}
+  .wall{position:absolute;inset:0;
+    background:
+      radial-gradient(72% 95% at 9% 22%, rgba(255,243,212,.42), rgba(255,243,212,0) 58%),
+      linear-gradient(180deg, rgba(255,238,205,.10), rgba(18,10,4,.34)),
+      repeating-linear-gradient(90deg, #8c5e39 0 26px, #6e4628 26px 29px);}
+  .window{position:absolute;left:5%;top:11%;width:22%;height:42%;border-radius:5px;
+    background:linear-gradient(160deg,#e9f1f4,#c2d4d9 68%,#a7bfc5);
+    box-shadow:0 0 38px rgba(255,247,224,.6), inset 0 0 0 5px #5c4029, inset 0 0 0 7px rgba(0,0,0,.15);}
+  .window i{position:absolute;background:#5c4029;}
+  .window i.v{left:50%;top:0;bottom:0;width:4px;transform:translateX(-50%);}
+  .window i.h{top:50%;left:0;right:0;height:4px;transform:translateY(-50%);}
+  .plant{position:absolute;pointer-events:none;}
+  .plant.hang{right:3%;top:-3%;width:120px;height:160px;}
+  .plant.pot{left:1.5%;top:44%;width:118px;height:130px;}
+  .plant svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 8px rgba(0,0,0,.25));}
+
+  .figures{position:absolute;inset:0;}
+  .fig{position:absolute;top:7%;height:60%;width:27%;max-width:185px;transform:translateX(-50%);}
+  .fig .glow{position:absolute;left:50%;top:22%;width:96%;height:64%;
+    transform:translate(-50%,-50%);border-radius:50%;
+    background:radial-gradient(circle, var(--accent) 0%, transparent 64%);
+    opacity:0;transition:opacity .3s;filter:blur(9px);}
+  .fig svg{position:relative;width:100%;height:100%;display:block;
+    filter:drop-shadow(0 10px 12px rgba(0,0,0,.30));}
+  .fig.speaking .glow{opacity:.62;}
+
+  .table-top{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);
+    width:130%;height:48%;border-radius:50%;
+    background:radial-gradient(120% 135% at 50% 6%, #c68d54 0%, #9c6a3c 36%, #70492650 0%, #6f4926 70%, #543717 100%);
+    box-shadow:0 -2px 0 rgba(255,236,202,.25) inset, 0 -28px 44px rgba(0,0,0,.32) inset, 0 -12px 28px rgba(0,0,0,.28);}
+  .table-top .sheen{position:absolute;left:50%;top:7%;width:60%;height:30%;
+    transform:translateX(-50%);border-radius:50%;
+    background:radial-gradient(closest-side, rgba(255,240,210,.32), transparent);}
+  .props{position:absolute;left:50%;bottom:1%;transform:translateX(-50%);
+    width:78%;max-width:540px;pointer-events:none;}
+  .props svg{width:100%;display:block;filter:drop-shadow(0 6px 8px rgba(0,0,0,.3));}
+
+  .placecards{position:absolute;inset:0;pointer-events:none;}
+  .placecard{position:absolute;transform:translateX(-50%);white-space:nowrap;
+    background:#fff;border-radius:8px;padding:5px 12px;text-align:center;
+    box-shadow:0 5px 12px rgba(0,0,0,.30);border-bottom:3px solid var(--accent);
+    transition:transform .25s,box-shadow .25s;}
+  .placecard .nm{display:block;white-space:nowrap;font-family:'Merriweather',serif;font-weight:700;
+    font-size:.74rem;color:var(--uu-navy);line-height:1.15;}
+  .placecard .disc{display:inline-block;margin-top:2px;font-size:.62rem;font-weight:700;
+    color:#fff;background:var(--accent);border-radius:12px;padding:1px 8px;}
+  .placecard.speaking{transform:translateX(-50%) translateY(-4px) scale(1.07);
+    box-shadow:0 9px 20px rgba(0,0,0,.36);}
+
+  .chair{position:absolute;left:50%;bottom:-9%;transform:translateX(-50%);
+    width:28%;max-width:185px;}
+  .chair svg{width:100%;display:block;filter:drop-shadow(0 -4px 12px rgba(0,0,0,.28));}
+
+  .mouth{transform-box:fill-box;transform-origin:center;}
+  .fig.speaking .mouth{animation:talk .26s ease-in-out infinite alternate;}
+  @keyframes talk{from{transform:scaleY(.5);}to{transform:scaleY(1.18);}}
+  @media(prefers-reduced-motion:reduce){.fig.speaking .mouth{animation:none;}}
+  .nameplate{display:none;}
+
+  .thinking{text-align:center;color:var(--muted);font-size:.86rem;min-height:20px;margin-top:6px;}
+  .dots span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:var(--uu-navy);animation:blink 1.2s infinite both;}
+  .dots span:nth-child(2){animation-delay:.2s;}.dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+
+  /* ---------- Transcript ---------- */
+  .transcript{display:flex;flex-direction:column;gap:14px;margin-bottom:18px;}
+  .bubble{max-width:84%;border-radius:14px;padding:12px 15px;font-size:.95rem;animation:rise .35s ease;}
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .bubble.expert{align-self:flex-start;background:#fff;border:1px solid var(--line);border-left:5px solid var(--accent);}
+  .bubble.student{align-self:flex-end;background:var(--uu-navy);color:#fff;border-bottom-right-radius:4px;}
+  .bubble .who{font-size:.74rem;font-weight:700;margin-bottom:3px;color:var(--accent);font-family:'Merriweather',serif;}
+  .bubble.student .who{color:var(--uu-yellow);}
+
+  .composer{display:flex;gap:10px;align-items:flex-end;position:sticky;bottom:14px;
+    background:#f6f7fb;padding-top:6px;}
+  .composer textarea{resize:vertical;min-height:54px;max-height:160px;}
+  .composer .btn{flex:none;height:50px;}
+  .errbox{background:#fff;border:1px solid var(--uu-pink);border-left:5px solid var(--uu-pink);
+    color:#7a1038;border-radius:10px;padding:11px 14px;font-size:.88rem;margin-bottom:14px;}
+  .reset-row{margin-top:8px;display:flex;gap:12px;flex-wrap:wrap;}
+  .composer-privacy{margin:6px 2px 0;font-size:.76rem;color:var(--muted);}
+  .appfoot{margin:26px 2px 4px;font-size:.74rem;color:var(--muted);}
+  .appfoot a{color:var(--uu-purple);}
+  @media(max-width:620px){
+    .room{height:clamp(280px,72vw,360px);}
+    .plant.hang,.plant.pot{display:none;}
+    .placecard{min-width:78px;padding:4px 8px;}
+    .placecard .nm{font-size:.64rem;}
+    .placecard .disc{font-size:.56rem;}
+  }
+</style>
+</head>
+<body>
+<header class="bar">
+  <span class="wordmark"><span class="sol" aria-hidden="true"></span>Universiteit Utrecht</span>
+  <h1>De interdisciplinaire tafel</h1>
+</header>
+
+<main class="wrap">
+  <div class="notice">
+    <strong>Let op:</strong> de drie experts aan tafel zijn door AI gegenereerde personages, geen echte mensen.
+    Ze kunnen zich vergissen of stellig klinken zonder gelijk te hebben. Toets hun beweringen kritisch —
+    dat hoort bij de oefening.
+  </div>
+  <div class="notice privacy">
+    <strong>Privacy:</strong> in de AI-modus wordt wat je intypt (je dilemma en je reacties) naar Claude van Anthropic
+    gestuurd om het debat te genereren; in de offline-modus verlaat je invoer je browser niet. Deze app heeft geen eigen
+    server en bewaart niets: je gesprek blijft in je browser en verdwijnt zodra je de pagina sluit, behalve het
+    Word-verslag dat je zelf downloadt. Voer geen bijzondere of
+    tot personen herleidbare gegevens in. Het gebruik valt onder de
+    <a href="https://www.uu.nl/organisatie/ai-beleid/studenten/ai-tools-voor-studenten/gebruikscondities-van-ai-tools" target="_blank" rel="noopener">gebruikscondities van AI-tools van de Universiteit Utrecht</a>.
+  </div>
+
+  <!-- ===================== SETUP ===================== -->
+  <section id="setup" class="card">
+    <h2>Zet je tafel</h2>
+    <p class="lede">
+      Kies jouw eigen vakgebied en drie experts uit andere disciplines. Daarna geef je een dilemma in
+      en gaan de drie met elkaar — en met jou — in debat. De disciplines moeten allemaal van elkaar verschillen,
+      zodat de perspectieven echt botsen.
+    </p>
+
+    <div class="field">
+      <label for="studentDisc">Jouw vakgebied <span class="hint">(jij bent de vierde aan tafel)</span></label>
+      <select id="studentDisc" class="disc-select"></select>
+      <div class="custom-row"><input type="text" placeholder="Vul je eigen vakgebied in" /></div>
+    </div>
+
+    <div class="field">
+      <label>De drie experts</label>
+      <div class="experts-grid" id="expertsGrid"></div>
+    </div>
+
+    <div class="field">
+      <label for="mode">Modus
+        <span class="hint">(AI geeft het rijkste debat; offline werkt zonder internet of API)</span></label>
+      <select id="mode">
+        <option value="ai" selected>AI-debat met Claude (internet/API nodig)</option>
+        <option value="offline">Offline — zonder API (eenvoudiger debat)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="argsPerRound">Bijdragen per expert per ronde
+        <span class="hint">(hoeveel argumenten elke expert per beurt inbrengt)</span></label>
+      <select id="argsPerRound">
+        <option value="1" selected>1 — kort en bondig</option>
+        <option value="2">2 — wat uitgebreider</option>
+        <option value="3">3 — uitgebreid debat</option>
+      </select>
+    </div>
+
+    <details class="adv">
+      <summary>Geavanceerd — API-sleutel (voor eigen hosting / GitHub Pages)</summary>
+      <div class="inner">
+        <p class="hint" style="margin-top:0">
+          In de Claude-omgeving werkt dit prototype direct. Wil je het zelfstandig hosten (bijv. GitHub Pages),
+          plak dan hier je Anthropic API-sleutel — die blijft in je browser en wordt nergens opgeslagen.
+        </p>
+        <input type="password" id="apiKey" placeholder="sk-ant-... (optioneel)" autocomplete="off" />
+        <label class="toggle" style="margin-top:12px;">
+          <input type="checkbox" id="ttsToggle" /> Laat de experts hardop spreken (browser-stem)
+        </label>
+      </div>
+    </details>
+
+    <div class="start-row">
+      <button class="btn" id="startBtn">Start het gesprek</button>
+      <span class="formerror" id="setupError"></span>
+    </div>
+  </section>
+
+  <!-- ===================== STAGE ===================== -->
+  <section id="stage">
+    <div class="stage-head">
+      <h2>Aan tafel</h2>
+      <span class="topic" id="topicLine"></span>
+    </div>
+
+    <div class="room" id="room">
+      <div class="wall" aria-hidden="true"></div>
+      <div class="window" aria-hidden="true"><i class="v"></i><i class="h"></i></div>
+      <div class="plant hang" aria-hidden="true"></div>
+      <div class="plant pot" aria-hidden="true"></div>
+      <div class="figures" id="figures"></div>
+      <div class="table-top" aria-hidden="true"><div class="sheen"></div></div>
+      <div class="props" aria-hidden="true"></div>
+      <div class="chair" id="chair" aria-hidden="true"></div>
+      <div class="placecards" id="placecards"></div>
+    </div>
+    <div class="thinking" id="thinking"></div>
+
+    <div id="errbox"></div>
+    <div class="transcript" id="transcript"></div>
+
+    <div class="composer">
+      <textarea id="composer" placeholder="Voer hier je dilemma in en druk op Verstuur…"></textarea>
+      <button class="btn" id="sendBtn">Verstuur</button>
+    </div>
+    <p class="composer-privacy">In de AI-modus gaat je invoer naar Claude (Anthropic) om het debat te genereren; in de offline-modus blijft alles in je browser. Voer geen herleidbare persoonsgegevens in.</p>
+    <div class="reset-row">
+      <button class="btn secondary" id="exportBtn">Exporteer naar Word</button>
+      <button class="btn secondary" id="resetBtn">Nieuw gesprek</button>
+    </div>
+  </section>
+  <footer class="appfoot">Avatars: <a href="https://www.dicebear.com/styles/micah/" target="_blank" rel="noopener">Micah</a> door Micah Lanier (CC BY 4.0), gegenereerd met DiceBear.</footer>
+</main>
+
+<script>
+"use strict";
+
+/* ---------------- Data ---------------- */
+const DISCIPLINES = [
+  "Filosofie","Ethiek","Rechtsgeleerdheid","Economie","Geneeskunde","Psychologie",
+  "Sociologie","Antropologie","Biologie","Natuurkunde","Informatica & AI",
+  "Theologie & religiewetenschap","Geschiedenis","Politicologie","Milieuwetenschappen",
+  "Bedrijfskunde","Onderwijskunde","Communicatiewetenschap","Neurowetenschappen","Rechtsfilosofie"
+];
+const ACCENTS = ["#5287C6","#24A793","#5B2182"]; // blue, teal, purple — distinct per seat
+const NAME_POOL = [
+  "Dr. Sofia Bakker","Prof. Daniël Verhoef","Dr. Amir Said","Prof. Lena Visser",
+  "Dr. Mei Tan","Prof. Tomás Oliveira","Dr. Noa de Wit","Prof. Hassan El Idrissi",
+  "Dr. Iris Janssen","Prof. Karl Berger","Dr. Priya Nair","Prof. Johan Smit"
+];
+
+const state = {
+  experts: [],           // [{name, disc, accent, variant}]
+  studentDisc: "",
+  apiKey: "",
+  tts: false,
+  history: [],           // anthropic messages
+  log: [],               // structured transcript for export
+  started: false,
+  busy: false,
+  voices: []
+};
+
+/* ---------------- Avatars: Micah (CC BY 4.0, Micah Lanier, via DiceBear) ---------------- */
+const PEEPS=[
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#c98276\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#c98276\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M-5 41c3.21-7.96 15.1-24.77 37-28.35 21.9-3.58 33.13 8.46 36 14.92\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g fill=\"#9a9088\"><path opacity=\".1\" d=\"M187.99 77.18c-8-6.4-21.84-7-27.5-6.5l-8-26.5c13.6 3.2 32 24 35.5 33Z\"/><path d=\"M85.8 11.76S91.52 7.8 115.74 1.7c24.21-6.1 33.04-3.72 33.04-3.72l11.8 72.84s-8.05-.18-28.04 4.19c-20 4.38-29.56 9.67-29.56 9.67l-17.2-72.9Z\"/><path d=\"M48.99 86.68c-6.8-41.6 23.33-68.17 37-75.5l16.98 73.5c-19.2-39.6-45.33-15.17-54 2Z\"/><path opacity=\".1\" d=\"M67.49 130.68c-7.2-27.2 22-41.84 35.5-46-7-16.34-23-31-42.5-13-18 30.5-11 54-5.5 72l12.5-13Z\"/></g></g><g transform=\"translate(142 119)\"><path d=\"M5.29 34.07c.11.82 1.14 1 1.72.41 2.46-2.52 6.25-4.36 10.65-4.89 2.6-.3 5.1-.12 7.32.48.75.2 1.5-.44 1.23-1.17A10.84 10.84 0 0 0 5.3 34.07ZM69.38 24.07c.12.82 1.15 1 1.73.41 2.44-2.48 6.19-4.3 10.54-4.83 2.56-.3 5.03-.12 7.23.47.75.2 1.5-.44 1.23-1.17a10.74 10.74 0 0 0-20.73 5.12Z\" fill=\"#000000\"/><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 7c-.33 3.83 0 12.2 4 15 5 3.5-.5 12-10.5 10\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#c98276\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"><circle cx=\"25\" cy=\"2\" r=\"4\" fill=\"#ac6651\"/><circle cx=\"26\" cy=\"1\" r=\"1\" fill=\"#fff\"/></g></g><g transform=\"translate(53 272)\"><path d=\"M260.37 90.86H-12.54l.1-.2C-7.89 81.38.5 64.31 11.4 49.03c6.2-8.67 13.13-16.65 20.54-22.27 7.41-5.61 15.12-8.73 22.95-8.04 15.06 1.31 28.46 9.56 41.93 17.83l3.83 2.35c14.48 8.82 29.35 17.02 45.72 13.43 5.53-1.2 9.26-3.8 11.6-7.16 2.32-3.3 3.15-7.15 3.3-10.66.14-3.52-.4-6.85-.96-9.26a39.89 39.89 0 0 0-.75-2.78c3.63-3.64 7.47-5.77 11.43-6.73 4.3-1.03 8.89-.73 13.72.7 9.73 2.87 20.14 10.25 30.3 19.73 18.61 17.37 35.69 41.14 45.36 54.68Z\" fill=\"#6a3d52\" stroke=\"#000\" stroke-width=\"4.27\"/></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M-.5 17.5c2.5 17 31 25 57 5.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M99 10.21c5.67-2.66 19-5.1 27 6.5M23.58 35.52c2.07-5.9 9.68-17.12 23.56-14.7M26.07 29.46l-6.14-5.43M122.96 11.16l6.15-5.43M32.52 23.81l-4.04-7.13M115.51 7.51l4.05-7.13M40.6 20.2l-2.2-7.9M106.44 6.9l2.2-7.9\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><ellipse cx=\"147.85\" cy=\"58.18\" rx=\"6.86\" ry=\"18.44\" transform=\"rotate(117 147.85 58.18)\" fill=\"#FCFDFF\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.12\" cy=\"28.93\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.78 16.12 28.93)\"/><ellipse cx=\"80.15\" cy=\"18.92\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.28 80.15 18.92)\"/></g><g transform=\"translate(-40 -8)\"><g stroke=\"#f4d150\" stroke-width=\"4\"><path d=\"M34.5 42.5 0 49.12\" stroke-linecap=\"round\"/><path d=\"M35.47 18.53 74.2 13.1a6 6 0 0 1 6.77 5.1l5.57 39.62a6 6 0 0 1-5.1 6.78l-34.48 4.84a6 6 0 0 1-6.65-4.48l-9.81-39.01a6 6 0 0 1 4.98-7.4ZM145.92 3.22 107.2 8.66a6 6 0 0 0-5.1 6.78l5.56 39.6a6 6 0 0 0 6.78 5.11l34.47-4.84a6 6 0 0 0 5.16-6.14l-1.32-40.2a6 6 0 0 0-6.83-5.75ZM83.5 37.12l22-3.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 7c-.33 3.83 0 12.2 4 15 5 3.5-.5 12-10.5 10\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#77311d\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M126.77 67.58 128 66l-1.23 1.58 1.72 1.34 1.19-1.83v-.02l.05-.06.04-.05a28.57 28.57 0 0 1 .8-1.18 112.35 112.35 0 0 1 11.5-14.05c3.67-3.78 7.83-7.4 12.13-9.93 4.31-2.53 8.58-3.84 12.53-3.3C209.17 44.2 240.4 63 260.67 91h-273.3c16.3-29.34 39.49-48.02 77.07-56.59 1.6-.36 3.78-.25 6.5.38 2.7.63 5.77 1.73 9.09 3.19 6.62 2.9 14.02 7.16 20.97 11.56a355.78 355.78 0 0 1 25.24 17.63l.4.3.1.08.02.02h.01Z\" fill=\"#445066\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#445066\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#fff\" fill-opacity=\".75\"/><path d=\"m109.5 54.5-9-21.5-7 15 16 6.5ZM141 53.5l9-21.5 7 15-16 6.5ZM70.5 14l-12 3 10 6.5 2-9.5ZM160 14l11 3-7 6.5-4-9.5Z\" fill=\"#000\" stroke-linejoin=\"round\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#9e5622\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#9e5622\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M-.5 17.5c2.5 17 31 25 57 5.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g stroke=\"#000\"><path d=\"m105.84 88.82 1.88.3v.08l-.04.16-.12.52c-.12.45-.3 1.09-.6 1.9a41.7 41.7 0 0 1-3.4 6.92c-3.17 5.32-8.7 12.66-18.31 21.6 29.97.74 55-8.92 72.82-19.04a156.35 156.35 0 0 0 21.71-14.87 118.43 118.43 0 0 0 7.5-6.7l.1-.1.01-.01 2.29-2.38.93 3.16-1.84.54 1.84-.54v.05l.05.13.15.52a817.06 817.06 0 0 1 2.69 9.28c1.75 6.14 4.14 14.58 6.66 23.77 5.03 18.35 10.6 39.81 12.7 51.97 3.49 20.32-1.91 35.74-5.1 44.87-.63 1.77-1.17 3.3-1.54 4.6.06.04.12.1.22.16.6.42 1.65.91 3.18 1.4 3.02.96 7.32 1.74 11.92 2.19 4.6.44 9.38.53 13.34.14 1.98-.2 3.7-.5 5.08-.92a6.85 6.85 0 0 0 2.58-1.27c.02-.08.03-.29-.02-.68-.1-.78-.4-1.87-.93-3.32-.8-2.15-1.97-4.8-3.35-7.88l-1.46-3.3c-3.93-8.94-8.65-20.56-9.68-32.4-1.15-13.16 1.45-24.42 3.79-34.54l.11-.48c2.39-10.34 4.38-19.32 2.34-28.42-3.1-13.8-7.32-25.3-13.8-33.57-6.42-8.17-15.13-13.27-27.5-14.21l-1.28-.1-.4-1.22c-5.7-17.57-13.38-29.05-23.18-36.17-9.8-7.12-21.96-10.05-36.94-10.05-27.7 0-57.5 10.52-79.88 28.72-22.35 18.18-37.14 43.9-35.2 74.33 2.13 33.6-.3 59.06-5.8 77.72-5 17-12.59 28.46-21.68 35.14 1.19.61 2.78 1.39 4.77 2.27 5.02 2.24 12.59 5.2 22.67 8.03 19.34 5.43 47.95 10.38 85.71 8.89-8.32-7.15-16.72-15.83-23.37-25-7.63-10.53-13.14-21.94-13.3-32.58-.19-12.62.67-45.67.93-52.5.62-15.9 10.82-28.15 20.54-36.3a96.6 96.6 0 0 1 18.96-12.34l.2-.1.13-.06.1-.05h.02v-.01l.8 1.74Zm0 0 1.88.3.56-3.5-3.23 1.46.79 1.74Zm100.23 126.57.03.04-.03-.04Z\" fill=\"#3a2a1d\" stroke-width=\"3.82\"/><path d=\"M191 58c.5 4.5-.3 13.5-1.5 19.5\" stroke-width=\"4\"/></g></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 7c-.33 3.83 0 12.2 4 15 5 3.5-.5 12-10.5 10\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#9e5622\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M260.7 91H-12.64C3.67 61.66 26.86 42.98 64.44 34.4c16.02-3.65 34.67-5.47 56.56-5.47 9.46 0 16.81 1.44 23.8 3.35 2.58.7 5.18 1.5 7.84 2.3 4.4 1.34 8.97 2.72 13.91 3.86l.14.03.15.01c46.12 3.8 73.78 24.3 93.85 52.5Z\" fill=\"#356b8c\"/><path d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#356b8c\"/><path opacity=\".75\" d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#fff\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M26 16.7c4.17-2.34 21-5.3 21 1.5 0 8.5-11.5 8-11.5 8s13.04-3.16 10.5 6c-2.5 9-9.5 5.5-11.5 4.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M222.73 100.8c0-66.1-36.46-110.8-80.87-110.8C84.96-10 27 11.34 27 112.25c0 24.97 10.66 43.58 25.56 57.29a42.88 42.88 0 0 1-3.5-4.92c-2.88-26.98 29.17-47.7 60.54-67.96 16.65-10.75 33.11-21.39 44.05-32.76 9.6 5.43 37.79 28.2 43.16 37.42 2.88 4.94 7.51 21.87 10.67 41.63 10.34-12.42 15.25-24.84 15.25-42.16Z\" fill=\"#9a9088\"/><path d=\"M154.26 63.25c13.18-11.95 32.89-39.21 31.62-56.92\"/></g></g><g transform=\"translate(142 119)\"><path d=\"M5.29 34.07c.11.82 1.14 1 1.72.41 2.46-2.52 6.25-4.36 10.65-4.89 2.6-.3 5.1-.12 7.32.48.75.2 1.5-.44 1.23-1.17A10.84 10.84 0 0 0 5.3 34.07ZM69.38 24.07c.12.82 1.15 1 1.73.41 2.44-2.48 6.19-4.3 10.54-4.83 2.56-.3 5.03-.12 7.23.47.75.2 1.5-.44 1.23-1.17a10.74 10.74 0 0 0-20.73 5.12Z\" fill=\"#000000\"/><g transform=\"translate(-40 -8)\"><g stroke=\"#000000\" stroke-width=\"4\"><path d=\"M34.5 42.5 0 49.12\" stroke-linecap=\"round\"/><path d=\"M35.47 18.53 74.2 13.1a6 6 0 0 1 6.77 5.1l5.57 39.62a6 6 0 0 1-5.1 6.78l-34.48 4.84a6 6 0 0 1-6.65-4.48l-9.81-39.01a6 6 0 0 1 4.98-7.4ZM145.92 3.22 107.2 8.66a6 6 0 0 0-5.1 6.78l5.56 39.6a6 6 0 0 0 6.78 5.11l34.47-4.84a6 6 0 0 0 5.16-6.14l-1.32-40.2a6 6 0 0 0-6.83-5.75ZM83.5 37.12l22-3.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 3c0 14 7 25 7 25S20 34 10 32\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#f9c9b6\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M260.7 91H-12.64C3.67 61.66 26.86 42.98 64.44 34.4c16.02-3.65 34.67-5.47 56.56-5.47 9.46 0 16.81 1.44 23.8 3.35 2.58.7 5.18 1.5 7.84 2.3 4.4 1.34 8.97 2.72 13.91 3.86l.14.03.15.01c46.12 3.8 73.78 24.3 93.85 52.5Z\" fill=\"#356b8c\"/><path d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#356b8c\"/><path opacity=\".75\" d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#fff\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"><path d=\"M146.13 49.15A73.74 73.74 0 0 1 27.69 123.4C10.5 107.5 6.5 56 2.7 31.65c14 31.5 49.62 33.94 83.5 28 28.5-5 51.3-6 51.3-45 1.88 2.62 6.97 27.59 8.63 34.5Z\" fill=\"#6a4e35\"/></g></g><g transform=\"translate(170 183)\"><path d=\"M-5 41c3.21-7.96 15.1-24.77 37-28.35 21.9-3.58 33.13 8.46 36 14.92\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M222.73 100.8c0-66.1-36.46-110.8-80.87-110.8C84.96-10 27 11.34 27 112.25c0 24.97 10.66 43.58 25.56 57.29a42.88 42.88 0 0 1-3.5-4.92c-2.88-26.98 29.17-47.7 60.54-67.96 16.65-10.75 33.11-21.39 44.05-32.76 9.6 5.43 37.79 28.2 43.16 37.42 2.88 4.94 7.51 21.87 10.67 41.63 10.34-12.42 15.25-24.84 15.25-42.16Z\" fill=\"#6a4e35\"/><path d=\"M154.26 63.25c13.18-11.95 32.89-39.21 31.62-56.92\"/></g></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 3c0 14 7 25 7 25S20 34 10 32\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#77311d\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"><path d=\"M24 0A24 24 0 1 1 0 24c0-6.4 3.5-11.5 6.57-16.5L7.5 6\" stroke=\"#f4d150\" stroke-width=\"4\"/></g></g><g transform=\"translate(53 272)\"><path d=\"M260.37 90.86H-12.54l.1-.2C-7.89 81.38.5 64.31 11.4 49.03c6.2-8.67 13.13-16.65 20.54-22.27 7.41-5.61 15.12-8.73 22.95-8.04 15.06 1.31 28.46 9.56 41.93 17.83l3.83 2.35c14.48 8.82 29.35 17.02 45.72 13.43 5.53-1.2 9.26-3.8 11.6-7.16 2.32-3.3 3.15-7.15 3.3-10.66.14-3.52-.4-6.85-.96-9.26a39.89 39.89 0 0 0-.75-2.78c3.63-3.64 7.47-5.77 11.43-6.73 4.3-1.03 8.89-.73 13.72.7 9.73 2.87 20.14 10.25 30.3 19.73 18.61 17.37 35.69 41.14 45.36 54.68Z\" fill=\"#6a3d52\" stroke=\"#000\" stroke-width=\"4.27\"/></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M-.5 17.5c2.5 17 31 25 57 5.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0M37.15 26.46 31 21.03M116.22 9.44l1.78-8M45.6 22.81l-4.05-7.13M108.14 9.02l.94-8.15M52.67 17.2l-2.2-7.9M100 8.03l-.78-8.16\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g fill=\"#3a2a1d\"><path opacity=\".1\" d=\"M187.99 77.18c-8-6.4-21.84-7-27.5-6.5l-8-26.5c13.6 3.2 32 24 35.5 33Z\"/><path d=\"M85.8 11.76S91.52 7.8 115.74 1.7c24.21-6.1 33.04-3.72 33.04-3.72l11.8 72.84s-8.05-.18-28.04 4.19c-20 4.38-29.56 9.67-29.56 9.67l-17.2-72.9Z\"/><path d=\"M48.99 86.68c-6.8-41.6 23.33-68.17 37-75.5l16.98 73.5c-19.2-39.6-45.33-15.17-54 2Z\"/><path opacity=\".1\" d=\"M67.49 130.68c-7.2-27.2 22-41.84 35.5-46-7-16.34-23-31-42.5-13-18 30.5-11 54-5.5 72l12.5-13Z\"/></g></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"><g stroke=\"#d2eff3\" stroke-width=\"4\"><circle cx=\"122.5\" cy=\"28\" r=\"26\"/><circle cx=\"55.5\" cy=\"37\" r=\"26\"/><path d=\"M97.5 35a8 8 0 0 0-16 0M30 39 0 44.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M12.3 12.34c5.45-1.24 14.38.62 12.42 10.54-1.74 8.82-11.1 9.3-13.72 6.82\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#f9c9b6\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M260.7 91H-12.64C3.67 61.66 26.86 42.98 64.44 34.4c16.02-3.65 34.67-5.47 56.56-5.47 9.46 0 16.81 1.44 23.8 3.35 2.58.7 5.18 1.5 7.84 2.3 4.4 1.34 8.97 2.72 13.91 3.86l.14.03.15.01c46.12 3.8 73.78 24.3 93.85 52.5Z\" fill=\"#356b8c\"/><path d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#356b8c\"/><path opacity=\".75\" d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#fff\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#e0a899\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#e0a899\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M26 16.7c4.17-2.34 21-5.3 21 1.5 0 8.5-11.5 8-11.5 8s13.04-3.16 10.5 6c-2.5 9-9.5 5.5-11.5 4.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0M37.15 26.46 31 21.03M116.22 9.44l1.78-8M45.6 22.81l-4.05-7.13M108.14 9.02l.94-8.15M52.67 17.2l-2.2-7.9M100 8.03l-.78-8.16\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g fill=\"#3a2a1d\"><path opacity=\".1\" d=\"M187.99 77.18c-8-6.4-21.84-7-27.5-6.5l-8-26.5c13.6 3.2 32 24 35.5 33Z\"/><path d=\"M85.8 11.76S91.52 7.8 115.74 1.7c24.21-6.1 33.04-3.72 33.04-3.72l11.8 72.84s-8.05-.18-28.04 4.19c-20 4.38-29.56 9.67-29.56 9.67l-17.2-72.9Z\"/><path d=\"M48.99 86.68c-6.8-41.6 23.33-68.17 37-75.5l16.98 73.5c-19.2-39.6-45.33-15.17-54 2Z\"/><path opacity=\".1\" d=\"M67.49 130.68c-7.2-27.2 22-41.84 35.5-46-7-16.34-23-31-42.5-13-18 30.5-11 54-5.5 72l12.5-13Z\"/></g></g><g transform=\"translate(142 119)\"><path d=\"M5.29 34.07c.11.82 1.14 1 1.72.41 2.46-2.52 6.25-4.36 10.65-4.89 2.6-.3 5.1-.12 7.32.48.75.2 1.5-.44 1.23-1.17A10.84 10.84 0 0 0 5.3 34.07ZM69.38 24.07c.12.82 1.15 1 1.73.41 2.44-2.48 6.19-4.3 10.54-4.83 2.56-.3 5.03-.12 7.23.47.75.2 1.5-.44 1.23-1.17a10.74 10.74 0 0 0-20.73 5.12Z\" fill=\"#000000\"/><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 3c0 14 7 25 7 25S20 34 10 32\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#e0a899\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><path d=\"M260.37 90.86H-12.54l.1-.2C-7.89 81.38.5 64.31 11.4 49.03c6.2-8.67 13.13-16.65 20.54-22.27 7.41-5.61 15.12-8.73 22.95-8.04 15.06 1.31 28.46 9.56 41.93 17.83l3.83 2.35c14.48 8.82 29.35 17.02 45.72 13.43 5.53-1.2 9.26-3.8 11.6-7.16 2.32-3.3 3.15-7.15 3.3-10.66.14-3.52-.4-6.85-.96-9.26a39.89 39.89 0 0 0-.75-2.78c3.63-3.64 7.47-5.77 11.43-6.73 4.3-1.03 8.89-.73 13.72.7 9.73 2.87 20.14 10.25 30.3 19.73 18.61 17.37 35.69 41.14 45.36 54.68Z\" fill=\"#3a4a63\" stroke=\"#000\" stroke-width=\"4.27\"/></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M10 24.16c4.94 6.45 12.43 13.6 23.98 11.96 11.55-1.62 16.68-9.6 15.17-16.04\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M99 10.21c5.67-2.66 19-5.1 27 6.5M23.58 35.52c2.07-5.9 9.68-17.12 23.56-14.7\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M140 56c14.67-.67 40.4-8.8 26-36M114 54c14.67-.67 40.4-8.8 26-36M78 65c14.67-.67 40.4-8.8 26-36\" stroke=\"#3a2a1d\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"><g stroke=\"#ffedef\" stroke-width=\"4\"><circle cx=\"122.5\" cy=\"28\" r=\"26\"/><circle cx=\"55.5\" cy=\"37\" r=\"26\"/><path d=\"M97.5 35a8 8 0 0 0-16 0M30 39 0 44.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M12.3 12.34c5.45-1.24 14.38.62 12.42 10.54-1.74 8.82-11.1 9.3-13.72 6.82\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#f9c9b6\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"></g></g><g transform=\"translate(53 272)\"><path d=\"M260.37 90.86H-12.54l.1-.2C-7.89 81.38.5 64.31 11.4 49.03c6.2-8.67 13.13-16.65 20.54-22.27 7.41-5.61 15.12-8.73 22.95-8.04 15.06 1.31 28.46 9.56 41.93 17.83l3.83 2.35c14.48 8.82 29.35 17.02 45.72 13.43 5.53-1.2 9.26-3.8 11.6-7.16 2.32-3.3 3.15-7.15 3.3-10.66.14-3.52-.4-6.85-.96-9.26a39.89 39.89 0 0 0-.75-2.78c3.63-3.64 7.47-5.77 11.43-6.73 4.3-1.03 8.89-.73 13.72.7 9.73 2.87 20.14 10.25 30.3 19.73 18.61 17.37 35.69 41.14 45.36 54.68Z\" fill=\"#6a3d52\" stroke=\"#000\" stroke-width=\"4.27\"/></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#e0a899\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#e0a899\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M68.42 31.57 67.4 17a8.06 8.06 0 0 0-9.74-7.3c-6.95 1.49-20.1 4.1-29.54 4.76-9.43.66-22.82-.1-29.9-.6a8.06 8.06 0 0 0-8.63 8.58L-9.4 37a8.06 8.06 0 0 0 9.73 7.3c6.95-1.48 20.1-4.1 29.54-4.76 9.44-.66 22.82.1 29.91.61a8.06 8.06 0 0 0 8.63-8.58Z\" fill=\"#000000\"/><path d=\"m-.25 17.97 1.6 6.07a6 6 0 0 0 6.22 4.46 6 6 0 0 0-5.54 5.28l-.74 6.23c7.28-1.52 19.34-3.83 28.3-4.46 8.98-.63 21.24-.02 28.66.48l-1.6-6.07a6 6 0 0 0-6.21-4.46 6 6 0 0 0 5.54-5.28l.73-6.24c-7.27 1.53-19.33 3.84-28.3 4.47-8.97.62-21.23.01-28.65-.48Z\" fill=\"#fff\"/></g><g transform=\"translate(110 102)\"><path d=\"M99 10.21c5.67-2.66 19-5.1 27 6.5M23.58 35.52c2.07-5.9 9.68-17.12 23.56-14.7\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M123.79 17.49H123.94a96.78 96.78 0 0 1 62.07 24.36c14.06 12.4 22.45 26.87 25.19 36.73-4.06 2.32-11.01 4.31-19.88 5.95-9.68 1.78-21.3 3.08-33.15 4.01-23.7 1.86-48.2 2.2-59.63 1.96l-6.07-.13 4.8 3.71c2.5 1.93 5.83 3.28 9.34 4.22 3.55.95 7.42 1.54 11.14 1.87 3.82.34 7.55.42 10.64.34-10.59 8.16-24.06 14.44-37.35 19.09a225.88 225.88 0 0 1-39.83 9.92l-2.15.32.5 2.11c3.34 14.43 9.5 39.65 13.62 56.57 1.83 7.5 3.26 13.38 3.87 15.94 1.09 4.56 4.5 11.05 8.4 17.03 3.6 5.52 7.78 10.89 11.32 14.2l-7.84 31.81H49.37c8.34-12.71 10.1-27.4 8.4-42.98-1.84-16.87-7.76-35-14-53.17l-1.85-5.36c-5.69-16.46-11.36-32.88-14.43-48.6-3.4-17.44-3.56-33.75 2.83-48.09 10.34-23.21 28.66-36.7 47-44.12 18.37-7.45 36.61-8.76 46.46-7.71Z\" fill=\"#3a2a1d\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 7c-.33 3.83 0 12.2 4 15 5 3.5-.5 12-10.5 10\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#e0a899\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M260.7 91H-12.64C3.67 61.66 26.86 42.98 64.44 34.4c16.02-3.65 34.67-5.47 56.56-5.47 9.46 0 16.81 1.44 23.8 3.35 2.58.7 5.18 1.5 7.84 2.3 4.4 1.34 8.97 2.72 13.91 3.86l.14.03.15.01c46.12 3.8 73.78 24.3 93.85 52.5Z\" fill=\"#2f5d52\"/><path d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#2f5d52\"/><path opacity=\".75\" d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#fff\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#f9c9b6\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M-.5 17.5c2.5 17 31 25 57 5.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M99 10.21c5.67-2.66 19-5.1 27 6.5M23.58 35.52c2.07-5.9 9.68-17.12 23.56-14.7\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M123.79 17.49H123.94a96.78 96.78 0 0 1 62.07 24.36c14.06 12.4 22.45 26.87 25.19 36.73-4.06 2.32-11.01 4.31-19.88 5.95-9.68 1.78-21.3 3.08-33.15 4.01-23.7 1.86-48.2 2.2-59.63 1.96l-6.07-.13 4.8 3.71c2.5 1.93 5.83 3.28 9.34 4.22 3.55.95 7.42 1.54 11.14 1.87 3.82.34 7.55.42 10.64.34-10.59 8.16-24.06 14.44-37.35 19.09a225.88 225.88 0 0 1-39.83 9.92l-2.15.32.5 2.11c3.34 14.43 9.5 39.65 13.62 56.57 1.83 7.5 3.26 13.38 3.87 15.94 1.09 4.56 4.5 11.05 8.4 17.03 3.6 5.52 7.78 10.89 11.32 14.2l-7.84 31.81H49.37c8.34-12.71 10.1-27.4 8.4-42.98-1.84-16.87-7.76-35-14-53.17l-1.85-5.36c-5.69-16.46-11.36-32.88-14.43-48.6-3.4-17.44-3.56-33.75 2.83-48.09 10.34-23.21 28.66-36.7 47-44.12 18.37-7.45 36.61-8.76 46.46-7.71Z\" fill=\"#9a9088\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><path d=\"M5.29 34.07c.11.82 1.14 1 1.72.41 2.46-2.52 6.25-4.36 10.65-4.89 2.6-.3 5.1-.12 7.32.48.75.2 1.5-.44 1.23-1.17A10.84 10.84 0 0 0 5.3 34.07ZM69.38 24.07c.12.82 1.15 1 1.73.41 2.44-2.48 6.19-4.3 10.54-4.83 2.56-.3 5.03-.12 7.23.47.75.2 1.5-.44 1.23-1.17a10.74 10.74 0 0 0-20.73 5.12Z\" fill=\"#000000\"/><g transform=\"translate(-40 -8)\"><g stroke=\"#77311d\" stroke-width=\"4\"><circle cx=\"122.5\" cy=\"28\" r=\"26\"/><circle cx=\"55.5\" cy=\"37\" r=\"26\"/><path d=\"M97.5 35a8 8 0 0 0-16 0M30 39 0 44.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M12.3 12.34c5.45-1.24 14.38.62 12.42 10.54-1.74 8.82-11.1 9.3-13.72 6.82\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#f9c9b6\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M260.7 91H-12.64C3.67 61.66 26.86 42.98 64.44 34.4c16.02-3.65 34.67-5.47 56.56-5.47 9.46 0 16.81 1.44 23.8 3.35 2.58.7 5.18 1.5 7.84 2.3 4.4 1.34 8.97 2.72 13.91 3.86l.14.03.15.01c46.12 3.8 73.78 24.3 93.85 52.5Z\" fill=\"#6a3d52\"/><path d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#6a3d52\"/><path opacity=\".75\" d=\"m52.93 36.58 9.15-19.6a1 1 0 0 1 1.25-.51c37.93 13.42 72.43 12.48 104.4 3.57a1 1 0 0 1 1.09.38l13.93 19.05a.98.98 0 0 1-.42 1.5c-33.6 13.2-96.67 10.95-128.91-3.07a.98.98 0 0 1-.49-1.32Z\" fill=\"#fff\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"><g fill=\"#3a2a1d\"><path d=\"M31 109a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM83 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM79 123a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM99 121a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 111a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM120 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM130 102a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM21 88a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM54 104a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM51 124a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM69 128a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM103 102a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM117 106a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM109 123a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM123 92a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM30 94a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM54 94a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM54 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM58 130a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM85 130a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM96 130a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM113 94a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM113 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM133 89a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM33 81a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM43 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM39 123a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM79 103a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM91 105a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM77 135a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 84a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 66a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM124 81a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM131 71a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM42 90a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM42 101a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM63 86a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM63 68a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM75 82a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM87 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z\"/><path d=\"M113 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM139 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM61 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM72 110a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM68 102a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM92 93a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM43 75a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM80 91a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM80 73a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM115 87a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM115 69a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM122 71a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM137 62a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z\"/><path d=\"M31 109a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM83 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM79 123a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM99 121a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 111a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM120 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM130 102a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM21 88a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM54 104a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM51 124a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM69 128a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM103 102a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM117 106a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM109 123a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM123 92a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM30 94a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM54 94a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM54 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM58 130a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM85 130a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM96 130a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM113 94a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM113 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM133 89a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM33 81a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM43 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM39 123a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM79 103a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM91 105a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM77 135a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 84a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 66a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM124 81a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM131 71a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM42 90a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM42 101a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM63 86a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM63 68a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM75 82a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM87 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM100 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z\" stroke=\"#000\"/><path d=\"M113 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM139 76a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM61 116a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM72 110a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM68 102a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM92 93a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM43 75a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM80 91a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM80 73a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM115 87a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM115 69a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM122 71a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM137 62a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z\" stroke=\"#000\"/></g></g></g><g transform=\"translate(170 183)\"><path d=\"M68.42 31.57 67.4 17a8.06 8.06 0 0 0-9.74-7.3c-6.95 1.49-20.1 4.1-29.54 4.76-9.43.66-22.82-.1-29.9-.6a8.06 8.06 0 0 0-8.63 8.58L-9.4 37a8.06 8.06 0 0 0 9.73 7.3c6.95-1.48 20.1-4.1 29.54-4.76 9.44-.66 22.82.1 29.91.61a8.06 8.06 0 0 0 8.63-8.58Z\" fill=\"#000000\"/><path d=\"m-.25 17.97 1.6 6.07a6 6 0 0 0 6.22 4.46 6 6 0 0 0-5.54 5.28l-.74 6.23c7.28-1.52 19.34-3.83 28.3-4.46 8.98-.63 21.24-.02 28.66.48l-1.6-6.07a6 6 0 0 0-6.21-4.46 6 6 0 0 0 5.54-5.28l.73-6.24c-7.27 1.53-19.33 3.84-28.3 4.47-8.97.62-21.23.01-28.65-.48Z\" fill=\"#fff\"/></g><g transform=\"translate(110 102)\"><path d=\"M99 10.21c5.67-2.66 19-5.1 27 6.5M23.58 35.52c2.07-5.9 9.68-17.12 23.56-14.7M26.07 29.46l-6.14-5.43M122.96 11.16l6.15-5.43M32.52 23.81l-4.04-7.13M115.51 7.51l4.05-7.13M40.6 20.2l-2.2-7.9M106.44 6.9l2.2-7.9\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><g stroke=\"#000\"><path d=\"m105.84 88.82 1.88.3v.08l-.04.16-.12.52c-.12.45-.3 1.09-.6 1.9a41.7 41.7 0 0 1-3.4 6.92c-3.17 5.32-8.7 12.66-18.31 21.6 29.97.74 55-8.92 72.82-19.04a156.35 156.35 0 0 0 21.71-14.87 118.43 118.43 0 0 0 7.5-6.7l.1-.1.01-.01 2.29-2.38.93 3.16-1.84.54 1.84-.54v.05l.05.13.15.52a817.06 817.06 0 0 1 2.69 9.28c1.75 6.14 4.14 14.58 6.66 23.77 5.03 18.35 10.6 39.81 12.7 51.97 3.49 20.32-1.91 35.74-5.1 44.87-.63 1.77-1.17 3.3-1.54 4.6.06.04.12.1.22.16.6.42 1.65.91 3.18 1.4 3.02.96 7.32 1.74 11.92 2.19 4.6.44 9.38.53 13.34.14 1.98-.2 3.7-.5 5.08-.92a6.85 6.85 0 0 0 2.58-1.27c.02-.08.03-.29-.02-.68-.1-.78-.4-1.87-.93-3.32-.8-2.15-1.97-4.8-3.35-7.88l-1.46-3.3c-3.93-8.94-8.65-20.56-9.68-32.4-1.15-13.16 1.45-24.42 3.79-34.54l.11-.48c2.39-10.34 4.38-19.32 2.34-28.42-3.1-13.8-7.32-25.3-13.8-33.57-6.42-8.17-15.13-13.27-27.5-14.21l-1.28-.1-.4-1.22c-5.7-17.57-13.38-29.05-23.18-36.17-9.8-7.12-21.96-10.05-36.94-10.05-27.7 0-57.5 10.52-79.88 28.72-22.35 18.18-37.14 43.9-35.2 74.33 2.13 33.6-.3 59.06-5.8 77.72-5 17-12.59 28.46-21.68 35.14 1.19.61 2.78 1.39 4.77 2.27 5.02 2.24 12.59 5.2 22.67 8.03 19.34 5.43 47.95 10.38 85.71 8.89-8.32-7.15-16.72-15.83-23.37-25-7.63-10.53-13.14-21.94-13.3-32.58-.19-12.62.67-45.67.93-52.5.62-15.9 10.82-28.15 20.54-36.3a96.6 96.6 0 0 1 18.96-12.34l.2-.1.13-.06.1-.05h.02v-.01l.8 1.74Zm0 0 1.88.3.56-3.5-3.23 1.46.79 1.74Zm100.23 126.57.03.04-.03-.04Z\" fill=\"#6a4e35\" stroke-width=\"3.82\"/><path d=\"M191 58c.5 4.5-.3 13.5-1.5 19.5\" stroke-width=\"4\"/></g></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.12\" cy=\"28.93\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.78 16.12 28.93)\"/><ellipse cx=\"80.15\" cy=\"18.92\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.28 80.15 18.92)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M12.3 12.34c5.45-1.24 14.38.62 12.42 10.54-1.74 8.82-11.1 9.3-13.72 6.82\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#77311d\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M126.77 67.58 128 66l-1.23 1.58 1.72 1.34 1.19-1.83v-.02l.05-.06.04-.05a28.57 28.57 0 0 1 .8-1.18 112.35 112.35 0 0 1 11.5-14.05c3.67-3.78 7.83-7.4 12.13-9.93 4.31-2.53 8.58-3.84 12.53-3.3C209.17 44.2 240.4 63 260.67 91h-273.3c16.3-29.34 39.49-48.02 77.07-56.59 1.6-.36 3.78-.25 6.5.38 2.7.63 5.77 1.73 9.09 3.19 6.62 2.9 14.02 7.16 20.97 11.56a355.78 355.78 0 0 1 25.24 17.63l.4.3.1.08.02.02h.01Z\" fill=\"#5b2182\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#5b2182\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#fff\" fill-opacity=\".75\"/><path d=\"m109.5 54.5-9-21.5-7 15 16 6.5ZM141 53.5l9-21.5 7 15-16 6.5ZM70.5 14l-12 3 10 6.5 2-9.5ZM160 14l11 3-7 6.5-4-9.5Z\" fill=\"#000\" stroke-linejoin=\"round\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#c98276\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#c98276\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"><path d=\"M146.13 49.15A73.74 73.74 0 0 1 27.69 123.4C10.5 107.5 6.5 56 2.7 31.65c14 31.5 49.62 33.94 83.5 28 28.5-5 51.3-6 51.3-45 1.88 2.62 6.97 27.59 8.63 34.5Z\" fill=\"#6a4e35\"/></g></g><g transform=\"translate(170 183)\"><path d=\"M10 24.16c4.94 6.45 12.43 13.6 23.98 11.96 11.55-1.62 16.68-9.6 15.17-16.04\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0M37.15 26.46 31 21.03M116.22 9.44l1.78-8M45.6 22.81l-4.05-7.13M108.14 9.02l.94-8.15M52.67 17.2l-2.2-7.9M100 8.03l-.78-8.16\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M140 56c14.67-.67 40.4-8.8 26-36M114 54c14.67-.67 40.4-8.8 26-36M78 65c14.67-.67 40.4-8.8 26-36\" stroke=\"#796a45\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 3c0 14 7 25 7 25S20 34 10 32\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#c98276\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M126.77 67.58 128 66l-1.23 1.58 1.72 1.34 1.19-1.83v-.02l.05-.06.04-.05a28.57 28.57 0 0 1 .8-1.18 112.35 112.35 0 0 1 11.5-14.05c3.67-3.78 7.83-7.4 12.13-9.93 4.31-2.53 8.58-3.84 12.53-3.3C209.17 44.2 240.4 63 260.67 91h-273.3c16.3-29.34 39.49-48.02 77.07-56.59 1.6-.36 3.78-.25 6.5.38 2.7.63 5.77 1.73 9.09 3.19 6.62 2.9 14.02 7.16 20.97 11.56a355.78 355.78 0 0 1 25.24 17.63l.4.3.1.08.02.02h.01Z\" fill=\"#445066\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#445066\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#fff\" fill-opacity=\".75\"/><path d=\"m109.5 54.5-9-21.5-7 15 16 6.5ZM141 53.5l9-21.5 7 15-16 6.5ZM70.5 14l-12 3 10 6.5 2-9.5ZM160 14l11 3-7 6.5-4-9.5Z\" fill=\"#000\" stroke-linejoin=\"round\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M68.42 31.57 67.4 17a8.06 8.06 0 0 0-9.74-7.3c-6.95 1.49-20.1 4.1-29.54 4.76-9.43.66-22.82-.1-29.9-.6a8.06 8.06 0 0 0-8.63 8.58L-9.4 37a8.06 8.06 0 0 0 9.73 7.3c6.95-1.48 20.1-4.1 29.54-4.76 9.44-.66 22.82.1 29.91.61a8.06 8.06 0 0 0 8.63-8.58Z\" fill=\"#000000\"/><path d=\"m-.25 17.97 1.6 6.07a6 6 0 0 0 6.22 4.46 6 6 0 0 0-5.54 5.28l-.74 6.23c7.28-1.52 19.34-3.83 28.3-4.46 8.98-.63 21.24-.02 28.66.48l-1.6-6.07a6 6 0 0 0-6.21-4.46 6 6 0 0 0 5.54-5.28l.73-6.24c-7.27 1.53-19.33 3.84-28.3 4.47-8.97.62-21.23.01-28.65-.48Z\" fill=\"#fff\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M210.18 49.4c-1.27 6.05-4.6 11.32-9.43 15.9 9.4 34.06 9.6 53.87 4.38 57.65l-14.8-49.99C158.4 91.7 98.65 94.9 83.69 94.9c-1.55.17-3.02.4-4.43.67-14.65 9-2.6 52.12 11.75 70.43l-11 2c-5.14-24.97-17.41-22.92-26.61-21.38l-.32.05c2.2 13.63 6.72 27.74 10.45 39.32.95 2.99 1.86 5.8 2.66 8.4-.79.1-1.48.3-2.12.47-5.5 1.53-7.41 2.06-33.38-61.97-6.47-15.95-6.03-30.16-.97-42.62-4.78-4.8-14.37-7.14-19.71-7.78 10.44-6.12 20.58-4.87 25.54-3.1.5-.75 1.02-1.49 1.56-2.22-.97-4.41-7.96-9.46-12.11-11.82 8.55-4.3 18.6-2.03 22.98-.2C67.63 47.13 97.03 35.05 122 29 170.81 17.17 189.5.5 189.5.5c20.68 8.5 25.62 25.22 20.68 48.9Z\" fill=\"#0e0e0e\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.12\" cy=\"28.93\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.78 16.12 28.93)\"/><ellipse cx=\"80.15\" cy=\"18.92\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.28 80.15 18.92)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M12.3 12.34c5.45-1.24 14.38.62 12.42 10.54-1.74 8.82-11.1 9.3-13.72 6.82\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#77311d\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M126.77 67.58 128 66l-1.23 1.58 1.72 1.34 1.19-1.83v-.02l.05-.06.04-.05a28.57 28.57 0 0 1 .8-1.18 112.35 112.35 0 0 1 11.5-14.05c3.67-3.78 7.83-7.4 12.13-9.93 4.31-2.53 8.58-3.84 12.53-3.3C209.17 44.2 240.4 63 260.67 91h-273.3c16.3-29.34 39.49-48.02 77.07-56.59 1.6-.36 3.78-.25 6.5.38 2.7.63 5.77 1.73 9.09 3.19 6.62 2.9 14.02 7.16 20.97 11.56a355.78 355.78 0 0 1 25.24 17.63l.4.3.1.08.02.02h.01Z\" fill=\"#3a4a63\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#3a4a63\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#fff\" fill-opacity=\".75\"/><path d=\"m109.5 54.5-9-21.5-7 15 16 6.5ZM141 53.5l9-21.5 7 15-16 6.5ZM70.5 14l-12 3 10 6.5 2-9.5ZM160 14l11 3-7 6.5-4-9.5Z\" fill=\"#000\" stroke-linejoin=\"round\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#e0a899\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#e0a899\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"><path d=\"M146.13 49.15A73.74 73.74 0 0 1 27.69 123.4C10.5 107.5 6.5 56 2.7 31.65c14 31.5 49.62 33.94 83.5 28 28.5-5 51.3-6 51.3-45 1.88 2.62 6.97 27.59 8.63 34.5Z\" fill=\"#9a9088\"/></g></g><g transform=\"translate(170 183)\"><path d=\"M-.5 17.5c2.5 17 31 25 57 5.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M140 56c14.67-.67 40.4-8.8 26-36M114 54c14.67-.67 40.4-8.8 26-36M78 65c14.67-.67 40.4-8.8 26-36\" stroke=\"#6a4e35\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.12\" cy=\"28.93\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.78 16.12 28.93)\"/><ellipse cx=\"80.15\" cy=\"18.92\" rx=\"9\" ry=\"10\" transform=\"rotate(-6.28 80.15 18.92)\"/></g><g transform=\"translate(-40 -8)\"></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 7c-.33 3.83 0 12.2 4 15 5 3.5-.5 12-10.5 10\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#e0a899\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M126.77 67.58 128 66l-1.23 1.58 1.72 1.34 1.19-1.83v-.02l.05-.06.04-.05a28.57 28.57 0 0 1 .8-1.18 112.35 112.35 0 0 1 11.5-14.05c3.67-3.78 7.83-7.4 12.13-9.93 4.31-2.53 8.58-3.84 12.53-3.3C209.17 44.2 240.4 63 260.67 91h-273.3c16.3-29.34 39.49-48.02 77.07-56.59 1.6-.36 3.78-.25 6.5.38 2.7.63 5.77 1.73 9.09 3.19 6.62 2.9 14.02 7.16 20.97 11.56a355.78 355.78 0 0 1 25.24 17.63l.4.3.1.08.02.02h.01Z\" fill=\"#356b8c\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#356b8c\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#fff\" fill-opacity=\".75\"/><path d=\"m109.5 54.5-9-21.5-7 15 16 6.5ZM141 53.5l9-21.5 7 15-16 6.5ZM70.5 14l-12 3 10 6.5 2-9.5ZM160 14l11 3-7 6.5-4-9.5Z\" fill=\"#000\" stroke-linejoin=\"round\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#c98276\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#c98276\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"></g></g><g transform=\"translate(170 183)\"><path d=\"M-.5 17.5c2.5 17 31 25 57 5.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M27 26.5c6.17 2.5 21.1 3 31.5-15M94 4c5.17 5.33 18.1 12.8 28.5 0M37.15 26.46 31 21.03M116.22 9.44l1.78-8M45.6 22.81l-4.05-7.13M108.14 9.02l.94-8.15M52.67 17.2l-2.2-7.9M100 8.03l-.78-8.16\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M123.79 17.49H123.94a96.78 96.78 0 0 1 62.07 24.36c14.06 12.4 22.45 26.87 25.19 36.73-4.06 2.32-11.01 4.31-19.88 5.95-9.68 1.78-21.3 3.08-33.15 4.01-23.7 1.86-48.2 2.2-59.63 1.96l-6.07-.13 4.8 3.71c2.5 1.93 5.83 3.28 9.34 4.22 3.55.95 7.42 1.54 11.14 1.87 3.82.34 7.55.42 10.64.34-10.59 8.16-24.06 14.44-37.35 19.09a225.88 225.88 0 0 1-39.83 9.92l-2.15.32.5 2.11c3.34 14.43 9.5 39.65 13.62 56.57 1.83 7.5 3.26 13.38 3.87 15.94 1.09 4.56 4.5 11.05 8.4 17.03 3.6 5.52 7.78 10.89 11.32 14.2l-7.84 31.81H49.37c8.34-12.71 10.1-27.4 8.4-42.98-1.84-16.87-7.76-35-14-53.17l-1.85-5.36c-5.69-16.46-11.36-32.88-14.43-48.6-3.4-17.44-3.56-33.75 2.83-48.09 10.34-23.21 28.66-36.7 47-44.12 18.37-7.45 36.61-8.76 46.46-7.71Z\" fill=\"#796a45\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><g fill=\"#000000\"><ellipse cx=\"16.53\" cy=\"29.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.78 16.53 29.4)\"/><ellipse cx=\"80.53\" cy=\"19.4\" rx=\"9\" ry=\"13.5\" transform=\"rotate(-6.28 80.53 19.4)\"/></g><g transform=\"translate(-40 -8)\"><g stroke=\"#ffffff\" stroke-width=\"4\"><circle cx=\"122.5\" cy=\"28\" r=\"26\"/><circle cx=\"55.5\" cy=\"37\" r=\"26\"/><path d=\"M97.5 35a8 8 0 0 0-16 0M30 39 0 44.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M12.3 12.34c5.45-1.24 14.38.62 12.42 10.54-1.74 8.82-11.1 9.3-13.72 6.82\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M30.5 6.18A23.78 23.78 0 0 0 23.08 5c-10.5 0-19 6.5-18 18.5 1.04 12.5 8.5 17 19 17A19.6 19.6 0 0 0 31 39.23\" stroke=\"#000\" stroke-width=\"8\"/><path d=\"M31.5 39.04a19.38 19.38 0 0 1-7.42 1.46c-10.5 0-17.96-4.5-19-17-1-12 7.5-18.5 18-18.5 3.14 0 6.19.6 8.92 1.73l-.5 32.3Z\" fill=\"#c98276\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 35)\"></g></g><g transform=\"translate(53 272)\"><g stroke=\"#000\" stroke-width=\"4\"><path d=\"M126.77 67.58 128 66l-1.23 1.58 1.72 1.34 1.19-1.83v-.02l.05-.06.04-.05a28.57 28.57 0 0 1 .8-1.18 112.35 112.35 0 0 1 11.5-14.05c3.67-3.78 7.83-7.4 12.13-9.93 4.31-2.53 8.58-3.84 12.53-3.3C209.17 44.2 240.4 63 260.67 91h-273.3c16.3-29.34 39.49-48.02 77.07-56.59 1.6-.36 3.78-.25 6.5.38 2.7.63 5.77 1.73 9.09 3.19 6.62 2.9 14.02 7.16 20.97 11.56a355.78 355.78 0 0 1 25.24 17.63l.4.3.1.08.02.02h.01Z\" fill=\"#5b2182\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#5b2182\"/><path d=\"m52.61 37.08 5.17-19.23c.2-.78 1.22-1 1.76-.4C74.4 33.7 93.16 33.08 99.4 32.33c.84-.1 1.5.82 1.1 1.58L87.34 58.86c-.2.38-.62.6-1.04.5-3.95-.82-23.62-5.63-33.57-21.5a1 1 0 0 1-.12-.78ZM183.2 36.98 171.61 17.5c-.4-.66-1.37-.65-1.79 0-5.73 8.83-15.63 12.9-19.09 14.1-.62.22-.9.96-.57 1.53l13.5 22.81c.2.34.59.53.97.42 2.13-.61 9.46-3.67 18.54-18.34a1 1 0 0 0 .01-1.04Z\" fill=\"#fff\" fill-opacity=\".75\"/><path d=\"m109.5 54.5-9-21.5-7 15 16 6.5ZM141 53.5l9-21.5 7 15-16 6.5ZM70.5 14l-12 3 10 6.5 2-9.5ZM160 14l11 3-7 6.5-4-9.5Z\" fill=\"#000\" stroke-linejoin=\"round\"/></g></g></g></svg>",
+"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\" fill=\"none\" shape-rendering=\"auto\"><metadata xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\"><rdf:RDF><rdf:Description><dc:title>Avatar Illustration System</dc:title><dc:creator>Micah Lanier</dc:creator><dc:source xsi:type=\"dcterms:URI\">https://www.figma.com/community/file/829741575478342595</dc:source><dcterms:license xsi:type=\"dcterms:URI\">https://creativecommons.org/licenses/by/4.0/</dcterms:license><dc:rights>Remix of „Avatar Illustration System” (https://www.figma.com/community/file/829741575478342595) by „Micah Lanier”, licensed under „CC BY 4.0” (https://creativecommons.org/licenses/by/4.0/)</dc:rights></rdf:Description></rdf:RDF></metadata><mask id=\"viewboxMask\"><rect width=\"360\" height=\"360\" rx=\"0\" ry=\"0\" x=\"0\" y=\"0\" fill=\"#fff\" /></mask><g mask=\"url(#viewboxMask)\"><g transform=\"translate(80 23)\"><path d=\"M154 319.5c-14.4-20-25.67-58.67-27-78L58.5 212 30 319.5h124Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M130.37 263.69c-2.1.2-4.22.31-6.37.31-30.78 0-56.05-21.57-58.76-49.1L127 241.5c.38 5.48 1.55 13.32 3.37 22.19Z\" fill=\"#000\" style=\"mix-blend-mode:multiply\"/><path d=\"M181.94 151.37v.01l.1.4.14.65A75.72 75.72 0 0 1 34.93 187.7l-.2-.74L18 117.13l-.06-.29A75.72 75.72 0 0 1 165.2 81.55l.05.21.02.08.05.2.05.2v.01l16.4 68.44.08.34.08.34Z\" fill=\"#77311d\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(34 102.3)\"><path d=\"M146.13 49.15A73.74 73.74 0 0 1 27.69 123.4C10.5 107.5 6.5 56 2.7 31.65c14 31.5 49.62 33.94 83.5 28 28.5-5 51.3-6 51.3-45 1.88 2.62 6.97 27.59 8.63 34.5Z\" fill=\"#9a9088\"/></g></g><g transform=\"translate(170 183)\"><path d=\"M26 16.7c4.17-2.34 21-5.3 21 1.5 0 8.5-11.5 8-11.5 8s13.04-3.16 10.5 6c-2.5 9-9.5 5.5-11.5 4.5\" stroke=\"#000000\" stroke-width=\"4\"/></g><g transform=\"translate(110 102)\"><path d=\"M99 10.21c5.67-2.66 19-5.1 27 6.5M23.58 35.52c2.07-5.9 9.68-17.12 23.56-14.7M26.07 29.46l-6.14-5.43M122.96 11.16l6.15-5.43M32.52 23.81l-4.04-7.13M115.51 7.51l4.05-7.13M40.6 20.2l-2.2-7.9M106.44 6.9l2.2-7.9\" stroke=\"#000000\" stroke-width=\"4\" stroke-linecap=\"round\"/></g><g transform=\"translate(49 11)\"><path d=\"M210.18 49.4c-1.27 6.05-4.6 11.32-9.43 15.9 9.4 34.06 9.6 53.87 4.38 57.65l-14.8-49.99C158.4 91.7 98.65 94.9 83.69 94.9c-1.55.17-3.02.4-4.43.67-14.65 9-2.6 52.12 11.75 70.43l-11 2c-5.14-24.97-17.41-22.92-26.61-21.38l-.32.05c2.2 13.63 6.72 27.74 10.45 39.32.95 2.99 1.86 5.8 2.66 8.4-.79.1-1.48.3-2.12.47-5.5 1.53-7.41 2.06-33.38-61.97-6.47-15.95-6.03-30.16-.97-42.62-4.78-4.8-14.37-7.14-19.71-7.78 10.44-6.12 20.58-4.87 25.54-3.1.5-.75 1.02-1.49 1.56-2.22-.97-4.41-7.96-9.46-12.11-11.82 8.55-4.3 18.6-2.03 22.98-.2C67.63 47.13 97.03 35.05 122 29 170.81 17.17 189.5.5 189.5.5c20.68 8.5 25.62 25.22 20.68 48.9Z\" fill=\"#9a9088\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(142 119)\"><path d=\"M5.29 34.07c.11.82 1.14 1 1.72.41 2.46-2.52 6.25-4.36 10.65-4.89 2.6-.3 5.1-.12 7.32.48.75.2 1.5-.44 1.23-1.17A10.84 10.84 0 0 0 5.3 34.07ZM69.38 24.07c.12.82 1.15 1 1.73.41 2.44-2.48 6.19-4.3 10.54-4.83 2.56-.3 5.03-.12 7.23.47.75.2 1.5-.44 1.23-1.17a10.74 10.74 0 0 0-20.73 5.12Z\" fill=\"#000000\"/><g transform=\"translate(-40 -8)\"><g stroke=\"#ac6651\" stroke-width=\"4\"><path d=\"M34.5 42.5 0 49.12\" stroke-linecap=\"round\"/><path d=\"M35.47 18.53 74.2 13.1a6 6 0 0 1 6.77 5.1l5.57 39.62a6 6 0 0 1-5.1 6.78l-34.48 4.84a6 6 0 0 1-6.65-4.48l-9.81-39.01a6 6 0 0 1 4.98-7.4ZM145.92 3.22 107.2 8.66a6 6 0 0 0-5.1 6.78l5.56 39.6a6 6 0 0 0 6.78 5.11l34.47-4.84a6 6 0 0 0 5.16-6.14l-1.32-40.2a6 6 0 0 0-6.83-5.75ZM83.5 37.12l22-3.5\"/></g></g></g><g transform=\"rotate(-8 1149.44 -1186.92)\"><path d=\"M16.5 3c0 14 7 25 7 25S20 34 10 32\" stroke=\"#000\" stroke-width=\"4\"/></g><g transform=\"translate(84 154)\"><path d=\"M37 8.25V7.13l-.95-.59A24.91 24.91 0 0 0 23.08 3C17.44 3 12.16 4.75 8.4 8.3c-3.8 3.58-5.86 8.83-5.31 15.37.52 6.37 2.66 11.06 6.2 14.17-.29 1-.37 2.08-.24 3.21a8.98 8.98 0 0 0 4.6 7.08C16.09 49.5 19.2 50 22.52 50c5.48 0 10.29-2.95 13.95-6.89l.53-.57V8.25Z\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M42.97 23.98c.07-.65.1-1.3.1-1.98 0-10.22-9.5-17-20-17C12.6 5 4.09 11.5 5.09 23.5c.56 6.68 2.95 11.07 6.65 13.72a5.7 5.7 0 0 0-.68 3.6C11.68 46.1 16.19 48 22.52 48c11.1 0 19.9-14.05 20.45-24.02Z\" fill=\"#77311d\"/><path d=\"M27.5 13.5c-4-1.83-12.8-2.8-16 8\" stroke=\"#000\" stroke-width=\"4\"/><path d=\"M17 14c2.17 1.83 6.3 7.5 5.5 15.5\" stroke=\"#000\" stroke-width=\"4\"/><g transform=\"translate(3 42)\"></g></g><g transform=\"translate(53 272)\"><path d=\"M260.37 90.86H-12.54l.1-.2C-7.89 81.38.5 64.31 11.4 49.03c6.2-8.67 13.13-16.65 20.54-22.27 7.41-5.61 15.12-8.73 22.95-8.04 15.06 1.31 28.46 9.56 41.93 17.83l3.83 2.35c14.48 8.82 29.35 17.02 45.72 13.43 5.53-1.2 9.26-3.8 11.6-7.16 2.32-3.3 3.15-7.15 3.3-10.66.14-3.52-.4-6.85-.96-9.26a39.89 39.89 0 0 0-.75-2.78c3.63-3.64 7.47-5.77 11.43-6.73 4.3-1.03 8.89-.73 13.72.7 9.73 2.87 20.14 10.25 30.3 19.73 18.61 17.37 35.69 41.14 45.36 54.68Z\" fill=\"#356b8c\" stroke=\"#000\" stroke-width=\"4.27\"/></g></g></svg>"
+];
+
+function chairSVG(){
+  return `<svg viewBox="0 0 200 120" role="img" aria-label="Jouw stoel">
+    <path d="M44,120 L44,40 C44,22 60,12 100,12 C140,12 156,22 156,40 L156,120 Z" fill="#5a3a20"/>
+    <path d="M52,120 L52,42 C52,28 66,20 100,20 C134,20 148,28 148,42 L148,120 Z" fill="#6e4a28"/>
+    <rect x="60" y="34" width="80" height="62" rx="10" fill="#7a5230"/>
+    <rect x="60" y="34" width="80" height="62" rx="10" fill="#3a2614" opacity=".35"/>
+    <path d="M64,40 C64,40 100,52 136,40" stroke="#caa074" stroke-width="2" fill="none" opacity=".3"/>
+  </svg>`;
+}
+
+/* room decorations */
+function plantHangSVG(){return `<svg viewBox="0 0 120 160">
+  <line x1="60" y1="0" x2="60" y2="40" stroke="#7a5a3a" stroke-width="2"/>
+  <path d="M30 46 Q60 38 90 46 L84 64 Q60 70 36 64 Z" fill="#7c4a2c"/>
+  <g fill="#3f7d4a">
+    <path d="M50 60 Q30 100 40 150 Q52 104 56 64 Z"/>
+    <path d="M70 60 Q92 96 82 150 Q70 104 66 64 Z"/>
+    <path d="M60 62 Q58 110 60 156 Q62 110 62 62 Z"/></g>
+  <g fill="#52a064">
+    <path d="M54 60 Q40 96 46 138 Q56 100 58 64 Z"/>
+    <path d="M68 60 Q84 92 76 138 Q66 100 64 64 Z"/></g>
+</svg>`;}
+function plantPotSVG(){return `<svg viewBox="0 0 118 130">
+  <g fill="#3f7d4a">
+    <ellipse cx="40" cy="46" rx="26" ry="16" transform="rotate(-32 40 46)"/>
+    <ellipse cx="80" cy="44" rx="26" ry="16" transform="rotate(28 80 44)"/>
+    <ellipse cx="59" cy="30" rx="22" ry="15"/></g>
+  <g fill="#54a567">
+    <ellipse cx="48" cy="40" rx="20" ry="12" transform="rotate(-26 48 40)"/>
+    <ellipse cx="72" cy="40" rx="20" ry="12" transform="rotate(22 72 40)"/></g>
+  <path d="M36 70 L82 70 L76 124 L42 124 Z" fill="#b9763f"/>
+  <path d="M36 70 L82 70 L80 84 L38 84 Z" fill="#a9692f"/>
+</svg>`;}
+function propsSVG(){return `<svg viewBox="0 0 540 130">
+  <ellipse cx="270" cy="118" rx="250" ry="14" fill="rgba(0,0,0,.18)"/>
+  <g><rect x="222" y="40" width="96" height="58" rx="4" fill="#2b3340"/><rect x="228" y="46" width="84" height="46" rx="2" fill="#5b87c6"/>
+    <path d="M210 98 L330 98 L342 112 L198 112 Z" fill="#cdd3dc"/><rect x="252" y="103" width="36" height="4" rx="2" fill="#9aa3b0"/></g>
+  <g><ellipse cx="74" cy="100" rx="26" ry="9" fill="#e7ded2"/><path d="M50 98 L54 70 L94 70 L98 98 Z" fill="#fff"/><path d="M94 74 q18 4 14 16 q-4 8 -16 6" fill="none" stroke="#fff" stroke-width="4"/><ellipse cx="74" cy="70" rx="20" ry="6" fill="#6b4326"/></g>
+  <g transform="translate(430 64) rotate(8)"><rect x="0" y="0" width="78" height="50" rx="3" fill="#fbfaf6"/><rect x="-6" y="6" width="78" height="50" rx="3" fill="#f1efe7"/><line x1="6" y1="20" x2="60" y2="20" stroke="#c9c5ba" stroke-width="2"/><line x1="6" y1="30" x2="60" y2="30" stroke="#c9c5ba" stroke-width="2"/><line x1="6" y1="40" x2="44" y2="40" stroke="#c9c5ba" stroke-width="2"/></g>
+</svg>`;}
+
+/* ---------------- Setup UI ---------------- */
+function fillSelect(sel,selected){
+  sel.innerHTML = DISCIPLINES.map(d=>`<option${d===selected?" selected":""}>${d}</option>`).join("")
+    + `<option value="__custom">Anders…</option>`;
+}
+function wireCustom(sel){
+  const row = sel.parentElement.querySelector(".custom-row");
+  if(!row) return;
+  sel.addEventListener("change",()=>{
+    if(sel.value==="__custom"){ row.classList.add("show"); row.querySelector("input").focus(); }
+    else row.classList.remove("show");
+  });
+}
+function valueOf(sel){
+  if(sel.value==="__custom"){
+    const t=sel.parentElement.querySelector(".custom-row input").value.trim();
+    return t;
+  }
+  return sel.value;
+}
+
+function buildSetup(){
+  const sd = document.getElementById("studentDisc");
+  fillSelect(sd,"Filosofie"); wireCustom(sd);
+
+  const grid = document.getElementById("expertsGrid");
+  const defaults = ["Ethiek","Economie","Informatica & AI"];
+  grid.innerHTML = "";
+  for(let i=0;i<3;i++){
+    const div=document.createElement("div");
+    div.className="expert-pick";
+    div.innerHTML = `<label class="head"><span class="seatdot" style="background:${ACCENTS[i]}"></span>Expert ${i+1}</label>
+      <select class="disc-select expert-disc"></select>
+      <div class="custom-row"><input type="text" placeholder="Eigen discipline"/></div>`;
+    grid.appendChild(div);
+    const sel=div.querySelector("select");
+    fillSelect(sel,defaults[i]); wireCustom(sel);
+  }
+}
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function onStart(){
+  const err=document.getElementById("setupError");
+  err.textContent="";
+  const studentDisc = valueOf(document.getElementById("studentDisc"));
+  const expSels=[...document.querySelectorAll(".expert-disc")];
+  const discs = expSels.map(valueOf);
+
+  if(!studentDisc || discs.some(d=>!d)){ err.textContent="Vul alle vakgebieden in."; return; }
+  const all=[studentDisc,...discs].map(d=>d.toLowerCase());
+  if(new Set(all).size !== all.length){ err.textContent="Alle vier de vakgebieden moeten van elkaar verschillen."; return; }
+
+  const names=shuffle(NAME_POOL).slice(0,3);
+  const idx=shuffle([...Array(PEEPS.length).keys()]).slice(0,3);
+  state.experts = discs.map((d,i)=>({name:names[i],disc:d,accent:ACCENTS[i],peep:PEEPS[idx[i]]}));
+  state.studentDisc = studentDisc;
+  state.apiKey = document.getElementById("apiKey").value.trim();
+  state.tts = document.getElementById("ttsToggle").checked;
+  state.argsPerRound = parseInt(document.getElementById("argsPerRound").value,10)||1;
+  state.mode = document.getElementById("mode").value;
+  state.round = 0;
+  state.offlineCursor = {0:0,1:0,2:0};
+  state.history=[]; state.log=[]; state.started=false;
+
+  renderStage();
+  document.getElementById("setup").style.display="none";
+  document.getElementById("stage").style.display="block";
+  document.getElementById("composer").focus();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------------- Stage ---------------- */
+const POS=[{left:20,top:9,scale:1},{left:50,top:4,scale:.9},{left:80,top:9,scale:1}];
+const CARD=[{left:21,top:56},{left:50,top:53},{left:79,top:56}];
+
+function renderStage(){
+  document.getElementById("topicLine").textContent = `Jij: ${state.studentDisc}` + (state.mode==="offline" ? " · offline-modus" : "");
+
+  document.querySelector(".plant.hang").innerHTML = plantHangSVG();
+  document.querySelector(".plant.pot").innerHTML = plantPotSVG();
+  document.querySelector(".props").innerHTML = propsSVG();
+
+  const figs=document.getElementById("figures");
+  const cards=document.getElementById("placecards");
+  figs.innerHTML=""; cards.innerHTML="";
+
+  state.experts.forEach((e,i)=>{
+    const f=document.createElement("div");
+    f.className="fig"; f.id="fig-"+i;
+    f.style.setProperty("--accent",e.accent);
+    f.style.left=POS[i].left+"%"; f.style.top=POS[i].top+"%";
+    f.style.transform=`translateX(-50%) scale(${POS[i].scale})`;
+    f.innerHTML=`<div class="glow"></div>${e.peep}`;
+    figs.appendChild(f);
+
+    const c=document.createElement("div");
+    c.className="placecard"; c.id="pc-"+i;
+    c.style.setProperty("--accent",e.accent);
+    c.style.left=CARD[i].left+"%"; c.style.top=CARD[i].top+"%";
+    c.innerHTML=`<span class="nm">${e.name}</span><span class="disc">${e.disc}</span>`;
+    cards.appendChild(c);
+  });
+
+  document.getElementById("chair").innerHTML = chairSVG();
+
+  const sc=document.createElement("div");
+  sc.className="placecard"; sc.style.setProperty("--accent","var(--uu-navy)");
+  sc.style.left="50%"; sc.style.top="72%";
+  sc.innerHTML=`<span class="nm">Jij</span><span class="disc" style="background:var(--uu-navy)">${state.studentDisc}</span>`;
+  cards.appendChild(sc);
+
+  document.getElementById("transcript").innerHTML="";
+  document.getElementById("errbox").innerHTML="";
+}
+function setSpeaking(i,on){
+  const f=document.getElementById("fig-"+i), c=document.getElementById("pc-"+i);
+  if(f) f.classList.toggle("speaking",on);
+  if(c) c.classList.toggle("speaking",on);
+}
+
+function setThinking(on){
+  const t=document.getElementById("thinking");
+  t.innerHTML = on ? `De tafel denkt na <span class="dots"><span></span><span></span><span></span></span>` : "";
+}
+function setBusy(b){
+  state.busy=b;
+  document.getElementById("sendBtn").disabled=b;
+  document.getElementById("composer").disabled=b;
+}
+
+function addBubble(kind,who,text,accent){
+  state.log.push({kind,who,text,accent:accent||"#001240"});
+  const tr=document.getElementById("transcript");
+  const b=document.createElement("div");
+  b.className="bubble "+kind;
+  if(accent) b.style.setProperty("--accent",accent);
+  b.innerHTML=`<div class="who"></div><div class="txt"></div>`;
+  b.querySelector(".who").textContent=who;
+  b.querySelector(".txt").textContent=text;
+  tr.appendChild(b);
+  b.scrollIntoView({behavior:"smooth",block:"end"});
+  return b;
+}
+
+/* ---------------- Speech (optional) ---------------- */
+function loadVoices(){
+  if(!("speechSynthesis" in window)) return;
+  state.voices = speechSynthesis.getVoices();
+}
+if("speechSynthesis" in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function speak(text,seat){
+  return new Promise(res=>{
+    if(!state.tts || !("speechSynthesis" in window)){ res(); return; }
+    const u=new SpeechSynthesisUtterance(text);
+    const nl=state.voices.filter(v=>/nl|dutch/i.test(v.lang+v.name));
+    if(nl.length) u.voice = nl[seat % nl.length];
+    u.lang="nl-NL";
+    u.pitch = [1.05,0.85,1.0][seat%3];
+    u.rate = 1.02;
+    u.onend=res; u.onerror=res;
+    speechSynthesis.speak(u);
+  });
+}
+function estimateMs(text){return Math.min(5200,Math.max(1300, text.length*22));}
+
+/* ---------------- Claude ---------------- */
+/* ---------------- Offline debate engine (no API) ---------------- */
+const LENS = {
+  "Filosofie":{p:["De kernvraag is conceptueel: wat bedoelen we precies met de begrippen die hier op tafel liggen, vóór we over oplossingen praten.","Een uitkomst kan wenselijk zijn en toch niet te rechtvaardigen; het proces en de aannames doen er moreel toe.","We verwarren hier makkelijk wat feitelijk zo is met wat zou moeten zijn."],q:"Welke aanname in deze redenering vind jij vanuit jouw vak het meest twijfelachtig?"},
+  "Ethiek":{p:["De vraag is niet alleen of het kán, maar of het de betrokkenen recht doet en wie de lasten draagt.","Goede bedoelingen volstaan niet; we moeten de voorzienbare schade en de verdeling daarvan wegen.","Autonomie en informed consent zijn hier in het geding, niet alleen het eindresultaat."],q:"Welke waarde zou voor jou de doorslag moeten geven?"},
+  "Rechtsgeleerdheid":{p:["Juridisch telt of er een grondslag is, of het proportioneel is en of er beroep en verweer mogelijk zijn.","Zonder transparante motivering is een besluit lastig toetsbaar, en toetsbaarheid is een rechtsstatelijke eis.","We moeten onderscheiden wat wenselijk is en wat de wet feitelijk toestaat of verbiedt."],q:"Waar zou jij de juridische grens trekken?"},
+  "Economie":{p:["Elke keuze kent kosten en baten; de vraag is welke fout goedkoper te corrigeren is.","Prikkels sturen gedrag: wat belonen of bestraffen we hier impliciet?","Schaarste dwingt tot afwegen — middelen die hierheen gaan, gaan niet ergens anders heen."],q:"Welke afweging tussen kosten en baten weegt voor jou het zwaarst?"},
+  "Geneeskunde":{p:["Eerst niet schaden: wat is de kans op schade en hoe ernstig is die?","Bewijs en onzekerheid horen expliciet gemaakt; we beslissen zelden met volledige zekerheid.","De afweging is altijd individueel: wat geldt voor de groep, hoeft niet te gelden voor deze persoon."],q:"Hoe zou jij baat en risico tegen elkaar afwegen?"},
+  "Psychologie":{p:["Gedrag en beleving doen ertoe: hoe ervaren mensen dit, en hoe reageren ze erop?","We onderschatten vaak vertekeningen en biases in ons eigen oordeel.","Vertrouwen en motivatie bepalen of een maatregel in de praktijk werkt."],q:"Welk effect op mensen zou jij het eerst onderzoeken?"},
+  "Sociologie":{p:["De vraag is wie hier macht heeft en welke groepen voor- of nadeel ondervinden.","Een ogenschijnlijk neutrale regel kan bestaande ongelijkheid versterken.","Instituties en normen vormen het gedrag minstens zo sterk als individuele keuzes."],q:"Welke groep verdient volgens jou de meeste aandacht?"},
+  "Antropologie":{p:["Wat wij vanzelfsprekend vinden, is cultureel bepaald; andere contexten kijken hier anders naar.","We moeten oppassen onze eigen kaders als universeel te presenteren.","Betekenis ontstaat in de praktijk van mensen, niet alleen in de regels op papier."],q:"Welke context zou het oordeel hier kunnen veranderen?"},
+  "Biologie":{p:["Systemen kennen variatie en aanpassing; één maatstaf vangt die diversiteit zelden.","Korte- en langetermijneffecten kunnen tegengesteld zijn.","We moeten oorzaak en correlatie scherp uit elkaar houden."],q:"Welk langetermijneffect zou jij willen meten?"},
+  "Natuurkunde":{p:["Wat is hier precies meetbaar, en met welke onzekerheid?","Een model is een vereenvoudiging; de aannames bepalen de grenzen van de conclusie.","Zonder reproduceerbaarheid is een claim moeilijk hard te maken."],q:"Welke grootheid zou jij eerst willen kwantificeren?"},
+  "Informatica & AI":{p:["Onverklaarbaarheid is meestal een ontwerpkeuze, geen natuurwet — we kunnen transparanter bouwen.","Een model is zo goed als zijn data; bias in de input wordt bias in de uitkomst.","Verklaarbaarheid kost soms iets aan prestatie; die ruil moet je bewust maken."],q:"Hoeveel prestatie zou jij inleveren voor uitlegbaarheid?"},
+  "Theologie & religiewetenschap":{p:["Achter de vraag liggen diepere opvattingen over wat een goed leven en een rechtvaardige orde is.","Tradities bieden doordachte taal voor verantwoordelijkheid, schuld en vergeving.","Wat heilig of onaantastbaar heet, verschilt en bepaalt waar grenzen liggen."],q:"Welk dieper goed staat er volgens jou op het spel?"},
+  "Geschiedenis":{p:["Dit is niet nieuw; vergelijkbare kwesties speelden eerder, met leerzame afloop.","Hoe iets is ontstaan, verklaart vaak waarom het nu zo werkt.","We moeten oppassen het verleden met de bril van nu te beoordelen."],q:"Welk historisch voorbeeld zou jij ernaast leggen?"},
+  "Politicologie":{p:["De vraag is hoe besluitvorming is georganiseerd en wie verantwoording aflegt.","Belangen botsen; het gaat om legitimiteit, niet alleen om de beste oplossing.","Regels werken anders zodra macht en stemmen in het spel komen."],q:"Wie zou hier volgens jou moeten beslissen, en met welke legitimiteit?"},
+  "Milieuwetenschappen":{p:["We moeten de effecten op lange termijn en op het systeem als geheel meewegen.","Wat lokaal efficiënt lijkt, kan elders of later kosten veroorzaken.","Onzekerheid is geen reden tot stilstand, maar wel tot voorzichtigheid."],q:"Welk effect op de lange termijn zou jij zwaarder laten wegen?"},
+  "Bedrijfskunde":{p:["Wat is het doel, en welke maatstaf vertelt of we het halen?","Uitvoerbaarheid telt: een plan dat niemand kan dragen, faalt.","Risico, kosten en draagvlak moeten in balans, niet één alleen."],q:"Welke maatstaf voor succes zou jij hanteren?"},
+  "Onderwijskunde":{p:["De vraag is wat dit doet met leren, motivatie en gelijke kansen.","Beoordeling stuurt gedrag: je krijgt waar je op toetst.","Feedback die studenten begrijpen, werkt beter dan een cijfer alleen."],q:"Wat zou dit volgens jou met het leren van studenten doen?"},
+  "Communicatiewetenschap":{p:["Hoe iets wordt gebracht, bepaalt mede hoe het wordt begrepen en vertrouwd.","Transparantie over het hoe schept vertrouwen; ondoorzichtigheid voedt wantrouwen.","Boodschap, kanaal en publiek hangen samen — los te bekijken werkt zelden."],q:"Hoe zou jij dit uitlegbaar maken voor wie het raakt?"},
+  "Neurowetenschappen":{p:["Beslissingen zijn deels onbewust; we overschatten hoe rationeel ze zijn.","Wat we meten in het brein, is niet één-op-één wat iemand ervaart.","Individuele verschillen zijn groot; gemiddelden verbergen die."],q:"Welk mechanisme achter het gedrag zou jij willen begrijpen?"},
+  "Rechtsfilosofie":{p:["De vraag raakt aan wat recht legitiem maakt: enkel de uitkomst, of ook de procedure?","Rechtvaardigheid en doelmatigheid kunnen botsen; we moeten kiezen wat voorgaat.","Een regel zonder onderliggende rechtvaardiging is moeilijk te verdedigen."],q:"Wat maakt een besluit hier volgens jou rechtvaardig?"}
+};
+const GENERIC={p:["Vanuit mijn vakgebied kijk ik vooral naar de aannames en de methode achter deze vraag.","We moeten scherp houden wat we zeker weten en wat we vermoeden.","De afweging hangt sterk af van het doel dat we vooropstellen."],q:"Hoe zou jij hier vanuit jouw vakgebied naar kijken?"};
+
+function lensFor(disc){ return LENS[disc] || GENERIC; }
+function surname(name){ return name.replace(/^(Dr\.|Prof\.)\s*/,"").split(" ").slice(-1)[0]; }
+
+function offlineTurns(studentText, isFirst){
+  const n=state.argsPerRound||1;
+  state.round++;
+  const order=[0,1,2];
+  for(let r=0;r<state.round%3;r++) order.push(order.shift());
+  const turns=[];
+  const layers=[];
+  for(let k=0;k<n;k++){ for(const i of order) layers.push({i,k}); }
+  layers.forEach((it,idx)=>{
+    const e=state.experts[it.i];
+    const lens=lensFor(e.disc);
+    const pt=lens.p[state.offlineCursor[it.i] % lens.p.length];
+    state.offlineCursor[it.i]++;
+    let text=pt;
+    // reference another expert from the second contribution onward
+    if(idx>0 && Math.random()<0.6){
+      const others=[0,1,2].filter(x=>x!==it.i);
+      const ref=state.experts[others[Math.floor(Math.random()*others.length)]];
+      const conn=["Ik begrijp wat "+surname(ref.name)+" zegt, maar ","In aanvulling op "+surname(ref.name)+": ","Anders dan "+surname(ref.name)+" denk ik dat ","Juist daarom, "+surname(ref.name)+": "];
+      text=conn[Math.floor(Math.random()*conn.length)]+text.charAt(0).toLowerCase()+text.slice(1);
+    } else if(isFirst && idx===0){
+      text="Laat ik vanuit mijn vak beginnen. "+text;
+    }
+    turns.push({speaker:it.i, text});
+  });
+  // last contribution invites the student
+  const last=turns[turns.length-1];
+  last.text += " " + lensFor(state.experts[last.speaker].disc).q;
+  return turns;
+}
+
+function systemPrompt(){
+  const list = state.experts.map((e,i)=>`${i}. ${e.name} — ${e.disc}`).join("\n");
+  const n = state.argsPerRound||1;
+  const countLine = n===1
+    ? "- Elke expert levert deze ronde precies één bijdrage."
+    : `- Elke expert levert deze ronde precies ${n} aparte bijdragen, met telkens een nieuw argument of een reactie op wat een ander zojuist zei. De array bevat dus ${3*n} items. Zet de bijdragen niet per expert gegroepeerd, maar door elkaar als een natuurlijk heen-en-weer gesprek (bijvoorbeeld 0,1,2,1,0,2…).`;
+  return `Je orkestreert een interdisciplinair rondetafelgesprek. Aan tafel zitten drie experts en één student.
+
+De drie experts:
+${list}
+
+De student denkt en spreekt vanuit het vakgebied: ${state.studentDisc}.
+
+Regels:
+- Elke expert spreekt consequent vanuit de eigen discipline: gebruikt de typische begrippen, methoden, waarden en zorgen van dat vakgebied.
+${countLine}
+- De experts zijn het regelmatig oneens. Ze reageren expliciet op elkaar bij naam, bouwen voort op of weerleggen elkaars punten. Vermijd kunstmatige consensus.
+- Houd elke bijdrage kort: 2 tot 4 zinnen, spreektaal, alsof het echt aan tafel wordt gezegd.
+- Sluit elke ronde af doordat minstens één expert de student rechtstreeks een vraag stelt of uitnodigt te reageren vanuit diens vakgebied (${state.studentDisc}).
+- Verzin geen feiten, statistieken of letterlijke citaten. Blijf bij redeneringen en perspectieven; bij onzekerheid zeg je dat expliciet.
+- Schrijf in het Nederlands.
+
+Antwoord UITSLUITEND met geldige JSON, zonder uitleg, zonder markdown, zonder code-blokken:
+{"turns":[{"speaker":0,"text":"..."},{"speaker":1,"text":"..."},{"speaker":2,"text":"..."}]}
+"speaker" is de index (0, 1 of 2) van de expert. Varieer per ronde wie als eerste spreekt.`;
+}
+
+async function callClaude(messages){
+  const headers={"Content-Type":"application/json"};
+  if(state.apiKey){
+    headers["x-api-key"]=state.apiKey;
+    headers["anthropic-version"]="2023-06-01";
+    headers["anthropic-dangerous-direct-browser-access"]="true";
+  }
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",headers,
+    body:JSON.stringify({
+      model:"claude-sonnet-4-6",
+      max_tokens:Math.min(2600, 800 + (state.argsPerRound||1)*600),
+      system:systemPrompt(),
+      messages
+    })
+  });
+  if(!res.ok){
+    let detail="";
+    try{detail=(await res.json()).error?.message||"";}catch(e){detail=await res.text().catch(()=> "");}
+    throw new Error(`API ${res.status}. ${detail}`.trim());
+  }
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+}
+
+function parseTurns(raw){
+  let s=raw.trim().replace(/```json/gi,"").replace(/```/g,"").trim();
+  const a=s.indexOf("{"), b=s.lastIndexOf("}");
+  if(a!==-1&&b!==-1) s=s.slice(a,b+1);
+  const obj=JSON.parse(s);
+  if(!obj.turns||!Array.isArray(obj.turns)) throw new Error("Onverwacht antwoordformaat.");
+  return obj.turns.filter(t=>t&&typeof t.text==="string"&&Number.isInteger(+t.speaker));
+}
+
+async function playRound(turns){
+  for(const t of turns){
+    const i=Math.max(0,Math.min(2,+t.speaker));
+    const e=state.experts[i];
+    setSpeaking(i,true);
+    addBubble("expert",`${e.name} · ${e.disc}`,t.text,e.accent);
+    if(state.tts){ await speak(t.text,i); }
+    else { await new Promise(r=>setTimeout(r,estimateMs(t.text))); }
+    setSpeaking(i,false);
+    await new Promise(r=>setTimeout(r,250));
+  }
+}
+
+async function sendTurn(){
+  if(state.busy) return;
+  const ta=document.getElementById("composer");
+  const text=ta.value.trim();
+  if(!text) return;
+  document.getElementById("errbox").innerHTML="";
+
+  const isFirst=!state.started;
+  if(isFirst){
+    addBubble("student","Jij · "+state.studentDisc,text);
+    state.history.push({role:"user",content:`Het dilemma van de student: ${text}`});
+    state.started=true;
+    ta.placeholder="Reageer, weeg de argumenten of voeg een nieuw aspect toe…";
+  }else{
+    addBubble("student","Jij · "+state.studentDisc,text);
+    state.history.push({role:"user",content:`De student reageert: ${text}`});
+  }
+  ta.value="";
+  setBusy(true); setThinking(true);
+
+  // Offline mode: generate locally, no network
+  if(state.mode==="offline"){
+    try{
+      const turns=offlineTurns(text,isFirst);
+      await new Promise(r=>setTimeout(r,450));
+      setThinking(false);
+      await playRound(turns);
+    }finally{
+      setBusy(false); ta.focus();
+    }
+    return;
+  }
+
+  try{
+    const raw=await callClaude(state.history);
+    const turns=parseTurns(raw);
+    state.history.push({role:"assistant",content:raw});
+    setThinking(false);
+    await playRound(turns);
+  }catch(err){
+    setThinking(false);
+    let msg=err.message||String(err);
+    if(/401|authentication/i.test(msg)) msg="De API-sleutel werd niet geaccepteerd. Controleer hem onder ‘Geavanceerd’.";
+    if(/Failed to fetch|NetworkError/i.test(msg)) msg="Geen verbinding met de API. Kies eventueel de offline-modus (zonder API) bij een nieuw gesprek.";
+    document.getElementById("errbox").innerHTML=`<div class="errbox">Het gesprek kon niet verder. ${msg}</div>`;
+    // roll back the failed user turn so the student can retry
+    state.history.pop();
+  }finally{
+    setBusy(false);
+    ta.focus();
+  }
+}
+
+/* ---------------- Word export ---------------- */
+function escapeHtml(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function exportWord(){
+  if(!state.log.length){
+    document.getElementById("errbox").innerHTML=
+      `<div class="errbox">Er is nog geen gesprek om te exporteren. Voer eerst een dilemma in.</div>`;
+    return;
+  }
+  const now=new Date();
+  const datum=now.toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"});
+  const studentEntries=state.log.filter(e=>e.kind==="student");
+  const dilemma=studentEntries.length?studentEntries[0].text:"(geen dilemma ingevoerd)";
+
+  const expertsRows=state.experts.map(e=>
+    `<tr><td style="padding:3px 12px 3px 0"><b style="color:${e.accent}">${escapeHtml(e.name)}</b></td>
+     <td style="padding:3px 0">${escapeHtml(e.disc)}</td></tr>`).join("");
+
+  // conversation excluding the opening dilemma (shown separately)
+  let firstStudentSeen=false;
+  const convo=state.log.map(e=>{
+    if(e.kind==="student" && !firstStudentSeen){ firstStudentSeen=true; return ""; }
+    const color=e.kind==="student"?"#001240":e.accent;
+    const who=escapeHtml(e.who);
+    return `<p style="margin:0 0 11pt 0">
+      <b style="color:${color}">${who}</b><br>
+      <span>${escapeHtml(e.text)}</span></p>`;
+  }).join("");
+
+  const reflectie=[
+    `Welke disciplinaire aanname botste het sterkst met jouw eigen vakgebied (${escapeHtml(state.studentDisc)})?`,
+    "Welk argument zette je het meest aan het denken, en welke discipline bracht het in?",
+    "Waar spraken de experts elkaar tegen? Hoe zou je dat verschil kunnen overbruggen of verklaren?",
+    "Welke bewering uit het gesprek wil je natrekken bij een betrouwbare bron, en waarom?"
+  ].map(q=>`<li style="margin-bottom:6pt">${q}</li>`).join("");
+
+  const html =
+`<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset='utf-8'>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+<style>
+@page{margin:2.2cm;}
+body{font-family:'Open Sans',Arial,sans-serif;color:#001240;font-size:11pt;line-height:1.5;}
+h1,h2{font-family:'Merriweather',Georgia,serif;color:#001240;}
+h1{font-size:21pt;margin:0 0 2pt 0;}
+h2{font-size:13pt;margin:20pt 0 7pt 0;border-bottom:2px solid #FFD200;padding-bottom:3pt;}
+.bar{background:#FFD200;color:#001240;padding:14pt 16pt;margin-bottom:14pt;}
+.meta{color:#5b647d;font-size:9.5pt;}
+.dilemma{background:#FFE6AB;border-left:4px solid #FFD200;padding:9pt 12pt;font-style:italic;}
+.foot{color:#5b647d;font-size:8.5pt;border-top:1px solid #e2e5ee;margin-top:22pt;padding-top:8pt;}
+table{border-collapse:collapse;}
+</style></head>
+<body>
+<div class="bar"><h1>De interdisciplinaire tafel</h1><div>Gespreksverslag — interdisciplinair debat</div></div>
+<p class="meta">Universiteit Utrecht · ${datum}</p>
+
+<h2>Deelnemers</h2>
+<table><tr><td style="padding:3px 12px 3px 0"><b>Jij</b></td><td style="padding:3px 0">${escapeHtml(state.studentDisc)}</td></tr>${expertsRows}</table>
+
+<h2>Het dilemma</h2>
+<p class="dilemma">${escapeHtml(dilemma)}</p>
+
+<h2>Het gesprek</h2>
+${convo}
+
+<h2>Reflectievragen</h2>
+<ol>${reflectie}</ol>
+
+<p class="foot">De experts in dit gesprek zijn door AI gegenereerde personages, geen echte personen. Hun uitspraken kunnen onjuist zijn en zijn niet geverifieerd. Behandel dit verslag als oefenmateriaal en toets feitelijke beweringen aan betrouwbare bronnen.</p>
+</body></html>`;
+
+  const blob=new Blob(["\ufeff",html],{type:"application/msword"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const stamp=now.toISOString().slice(0,10);
+  a.href=url; a.download=`interdisciplinaire-tafel-verslag-${stamp}.doc`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+/* ---------------- Wire up ---------------- */
+buildSetup();
+document.getElementById("startBtn").addEventListener("click",onStart);
+document.getElementById("sendBtn").addEventListener("click",sendTurn);
+document.getElementById("exportBtn").addEventListener("click",exportWord);
+document.getElementById("composer").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)){ e.preventDefault(); sendTurn(); }
+});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  document.getElementById("stage").style.display="none";
+  document.getElementById("setup").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+</script>
+</body>
+</html>
